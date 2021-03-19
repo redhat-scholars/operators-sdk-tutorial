@@ -15,6 +15,9 @@ A Kubernetes tutorial to show how you can deploy a Java service to a Kubernetes 
 * xref:01-setup.adoc#minikube[Minikube]
 
 [.tile]
-.xref:02-deploy.adoc[Deploying]
-* xref:02-helm.adoc#init[Package the Application]
-* xref:02-deploy.adoc#deploy[Deploy the Application]
+.xref:02-helm.adoc[Deploying]
+* xref:02-helm.adoc#init[Generate the operator]
+
+[.tile]
+.xref:03-ansible.adoc[Deploying]
+* xref:03-ansible.adoc#init[Generate the operator]

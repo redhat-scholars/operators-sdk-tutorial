@@ -1,0 +1,7 @@
+apiVersion: operators.com.redhat/v1
+kind: VisitorSite
+metadata:
+  name: visitorsite-sample
+spec:
+  size: 1
+  title: Hello Ansible

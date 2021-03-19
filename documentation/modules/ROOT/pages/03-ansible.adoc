@@ -1,0 +1,99 @@
+= Ansible Role as Operator
+include::_attributes.adoc[]
+
+[#install-ansible]
+
+Make sure you have `ansible` and `python-ansible-runner` installed and the following `pip` modules: 
+
+- `ansible-runner-http`
+- `kubernetes`
+- `openshift` 
+
+[#init]
+== Scaffold the new operator
+
+create a new directory on your machine, for instance : `$HOME/vis-ansible`
+
+
+[.console-input]
+[source, java,subs="+macros,+attributes"]
+----
+operator-sdk init --domain com.redhat --plugins ansible
+----
+
+[#api]
+== Generate an API
+
+Le's create an API for our operator : 
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+operator-sdk create api --group operators --version v1 --kind VisitorSite
+----
+
+[#copy-ansible-roles]
+== Copy Ansible roles
+
+In your new project you have a folder : `roles` create a folder `visitorsite` , and copy the content from `$TUTORIAL_HOME/apps/ansible`
+
+[#edit-watcher]
+== Edit the watches
+
+For running the oeprator locally you first need to update the `watches.yml` file : 
+
+Open the file and replace :
+
+[source,adoc]
+----
+# FIXME: Specify the role or playbook for this resource.
+----
+
+with the complete path to your `roles/visitorsite` folder, i.e `/home/sebastienblanc/deepdives/ansible-vis/roles/visitorsite` 
+
+[.console-input]
+[source,adoc]
+----
+roles: /home/sebastienblanc/deepdives/ansible-vis/roles/visitorsite
+----
+
+[#apply-cr]
+== Apply a Custom Resource 
+
+You can now apply a custom resource 
+
+[.console-input]
+[source,adoc]
+----
+apiVersion: operators.com.redhat/v1
+kind: VisitorSite
+metadata:
+  name: visitorsite-sample
+spec:
+  size: 1
+  title: Hello Ansible
+
+----
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+kubectl apply -f $TUTORIAL_HOME/apps/cr/visitorsite-ansible.yml
+----
+
+Check the pods getting created :
+
+[.console-input]
+[source,adoc]
+----
+kubectl get pods
+
+NAME                                 READY   STATUS    RESTARTS   AGE
+
+mysql-86c559bb7f-kjjvt               1/1     Running   0          28h
+
+visitors-backend-7489bb97dd-wggkt    1/1     Running   0          28h
+
+visitors-frontend-86df47fffc-d2bgl   1/1     Running   0          28h
+
+----

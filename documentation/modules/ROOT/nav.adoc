@@ -8,3 +8,11 @@
 ** xref:02-helm.adoc#copy-helm-chart[Copy Helm Chart]
 ** xref:02-helm.adoc#build-run[Build & Run]
 ** xref:02-helm.adoc#apply-cr[Apply CR]
+
+* xref:03-ansible.adoc[3. Ansible Operator]
+** xref:03-ansible.adoc#init[Scaffold Operator]
+** xref:03-ansible.adoc#api[Create API]
+** xref:03-ansible.adoc#copy-helm-chart[Copy Ansible Role]
+** xref:03-ansible.adoc#edit-watcher[Update watches]
+** xref:03-ansible.adoc#build-run[Build & Run]
+** xref:03-ansible.adoc#apply-cr[Apply CR]

@@ -4,6 +4,8 @@ include::_attributes.adoc[]
 [#init]
 == Scaffold the new operator
 
+create a new directory on your machine, for instance : `$HOME/vis-helm`
+
 [.console-input]
 [source, java,subs="+macros,+attributes"]
 ----
@@ -59,7 +61,7 @@ spec:
 [.console-input]
 [source,bash,subs="+macros,+attributes"]
 ----
-kubectl apply -f $TUTORIAL_HOME/apps/cr/visitorsite.yml
+kubectl apply -f $TUTORIAL_HOME/apps/cr/visitorsite-helm.yml
 ----
 
 Check the pods getting created :
