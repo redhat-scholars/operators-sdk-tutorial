@@ -16,5 +16,5 @@ A Kubernetes tutorial to show how you can deploy a Java service to a Kubernetes 
 
 [.tile]
 .xref:02-deploy.adoc[Deploying]
-* xref:02-deploy.adoc#package[Package the Application]
+* xref:02-helm.adoc#init[Package the Application]
 * xref:02-deploy.adoc#deploy[Deploy the Application]

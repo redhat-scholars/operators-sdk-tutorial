@@ -1,0 +1,80 @@
+= Helm Chart as Operator
+include::_attributes.adoc[]
+
+[#init]
+== Scaffold the new operator
+
+[.console-input]
+[source, java,subs="+macros,+attributes"]
+----
+operator-sdk init --domain com.redhat --plugins helm
+----
+
+[#api]
+== Generate an API
+
+Le's create an API for our operator : 
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+operator-sdk create api --group operators --version v1 --kind VisitorSite
+----
+
+[#copy-helm-chart]
+== Copy Helm Chart sample
+
+In your new project you have a folder : `helm-charts/visitorsite` , delete the content and replace it with the content from `$TUTORIAL_HOME/apps/helm`
+
+[#build-run]
+== Run your operator locally
+
+Be sure to be connected to a Kubernetes cluster and then run 
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+make install run
+----
+
+[#apply-cr]
+== Apply a Custom Resource 
+
+You can now apply a custom resource 
+
+[.console-input]
+[source,adoc]
+----
+apiVersion: operators.com.redhat/v1
+kind: VisitorSite
+metadata:
+  name: visitorsite-sample
+spec:
+  backend:
+    size: 1
+  frontend:
+    title: Operator Deployed Visitors Site
+----
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+kubectl apply -f $TUTORIAL_HOME/apps/cr/visitorsite.yml
+----
+
+Check the pods getting created :
+
+[.console-input]
+[source,adoc]
+----
+kubectl get pods
+
+NAME                                 READY   STATUS    RESTARTS   AGE
+
+mysql-86c559bb7f-kjjvt               1/1     Running   0          28h
+
+visitors-backend-7489bb97dd-wggkt    1/1     Running   0          28h
+
+visitors-frontend-86df47fffc-d2bgl   1/1     Running   0          28h
+
+----

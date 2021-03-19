@@ -2,6 +2,9 @@
 ** xref:01-setup.adoc#prerequisite[Prerequisites]
 ** xref:01-setup.adoc#minikube[Setup Minikube]
 
-* xref:02-deploy.adoc[2. Deploy Service]
-** xref:02-deploy.adoc#package[Build Service]
-** xref:02-deploy.adoc#deploy[Deploy Dervice]
+* xref:02-helm.adoc[2. Helm Operator]
+** xref:02-helm.adoc#init[Scaffold Operator]
+** xref:02-helm.adoc#api[Create API]
+** xref:02-helm.adoc#copy-helm-chart[Copy Helm Chart]
+** xref:02-helm.adoc#build-run[Build & Run]
+** xref:02-helm.adoc#apply-cr[Apply CR]

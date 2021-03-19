@@ -1,0 +1,9 @@
+apiVersion: operators.com.redhat/v1
+kind: VisitorSite
+metadata:
+  name: visitorsite-sample
+spec:
+  backend:
+    size: 1
+  frontend:
+    title: Operator Deployed Visitors Site
