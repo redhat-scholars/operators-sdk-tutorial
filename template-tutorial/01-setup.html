@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Setup :: Template Tutorial</title>
-    <link rel="canonical" href="https://redhat-scholars.github.io/course-template/template-tutorial/01-setup.html">
+    <title>Setup :: Operators SDK</title>
+    <link rel="canonical" href="https://redhat-scholars.github.io/operators-sdk-tutorial/template-tutorial/01-setup.html">
     <link rel="prev" href="index.html">
-    <link rel="next" href="02-deploy.html">
+    <link rel="next" href="02-helm.html">
     <meta name="generator" content="Antora 2.3.4">
     <link rel="stylesheet" href="../_/css/site.css">
 <link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
@@ -18,7 +18,7 @@
     <div class="navbar-brand">
       <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img
           src="../_/img/header_logo.png" height="40px" alt="Red Hat Developer Program"></a>
-      <a class="navbar-item" href="https://redhat-scholars.github.io/course-template">Template Tutorial</a>
+      <a class="navbar-item" href="https://redhat-scholars.github.io/operators-sdk-tutorial">Operators SDK</a>
       <button class="navbar-burger" data-target="topbar-nav">
         <span></span>
         <span></span>
@@ -67,7 +67,7 @@
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
   <nav class="nav-menu">
-    <h3 class="title"><a href="index.html">Template Tutorial</a></h3>
+    <h3 class="title"><a href="index.html">Operators SDK</a></h3>
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
@@ -85,13 +85,22 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="02-deploy.html">2. Deploy Service</a>
+    <a class="nav-link" href="02-helm.html">2. Helm Operator</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="02-deploy.html#package">Build Service</a>
+    <a class="nav-link" href="02-helm.html#init">Scaffold Operator</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="02-deploy.html#deploy">Deploy Dervice</a>
+    <a class="nav-link" href="02-helm.html#api">Create API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-helm.html#copy-helm-chart">Copy Helm Chart</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-helm.html#build-run">Build &amp; Run</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-helm.html#apply-cr">Apply CR</a>
   </li>
 </ul>
   </li>
@@ -102,12 +111,12 @@
 </div>
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
-    <span class="title">Template Tutorial</span>
+    <span class="title">Operators SDK</span>
     <span class="version">master</span>
   </div>
   <ul class="components">
     <li class="component is-current">
-      <span class="title">Template Tutorial</span>
+      <span class="title">Operators SDK</span>
       <ul class="versions">
         <li class="version is-current is-latest">
           <a href="index.html">master</a>
@@ -125,11 +134,11 @@
   <a href="index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="index.html">Template Tutorial</a></li>
+    <li><a href="index.html">Operators SDK</a></li>
     <li><a href="01-setup.html">1. Setup</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/redhat-scholars/operators-sdk/edit/master/documentation/modules/ROOT/pages/01-setup.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/redhat-scholars/operators-sdk-tutorial/edit/master/documentation/modules/ROOT/pages/01-setup.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <article class="doc">
@@ -188,16 +197,16 @@ Please have them installed and configured before you get started with any of the
 <td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://storage.googleapis.com/kubernetes-release/release/v1.18.6/bin/windows/amd64/kubectl.exe">Download</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/wercker/stern">stern</a></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><code>brew install stern</code></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/wercker/stern/releases/download/1.6.0/stern_linux_amd64">Download</a></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/wercker/stern/releases/download/1.11.0/stern_windows_amd64.exe">Download</a></p></td>
-</tr>
-<tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><code>Apache Maven 3.6.3</code></p></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz">Download</a></p></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip">Download</a></p></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz">Download</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>Operator SDK CLI</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://sdk.operatorframework.io/docs/installation/#install-from-homebrew-macos">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://sdk.operatorframework.io/docs/installation/#install-from-github-release">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://sdk.operatorframework.io/docs/installation/#install-from-github-release">Download</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -365,25 +374,17 @@ Kubernetes Version: v1.18.6</code></pre>
 </div>
 </div>
 </div>
-<div class="paragraph">
-<p>And then you are ready for start using Kubernetes:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/kubelogo.png" alt="kubelogo">
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="downloadtutorial"><a class="anchor" href="#downloadtutorial"></a>Get tutorial sources</h2>
+<h2 id="_get_tutorial_sources"><a class="anchor" href="#_get_tutorial_sources"></a>Get tutorial sources</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Before we start setting up the environment, let’s clone the tutorial sources and set the <code>TUTORIAL_HOME</code> environment variable to point to the root directory of the tutorial:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone <a href="https://github.com/redhat-developer-demos/rhd-tutorial-common.git" class="bare">https://github.com/redhat-developer-demos/rhd-tutorial-common.git</a> my_folder</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone <a href="https://github.com/redhat-scholars/operators-sdk-tutorial" class="bare">https://github.com/redhat-scholars/operators-sdk-tutorial</a> my_folder</code></pre>
 </div>
 </div>
 <div class="listingblock console-input">
@@ -399,8 +400,8 @@ Kubernetes Version: v1.18.6</code></pre>
 </div>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="index.html">Template Tutorial</a></span>
-  <span class="next"><a href="02-deploy.html">2. Deploy Service</a></span>
+  <span class="prev"><a href="index.html">Operators SDK</a></span>
+  <span class="next"><a href="02-helm.html">2. Helm Operator</a></span>
 </nav>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">

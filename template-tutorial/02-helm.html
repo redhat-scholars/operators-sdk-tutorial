@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Welcome to Template Tutorial :: Operators SDK</title>
-    <link rel="canonical" href="https://redhat-scholars.github.io/operators-sdk-tutorial/template-tutorial/index.html">
-    <link rel="next" href="01-setup.html">
+    <title>Helm Chart as Operator :: Operators SDK</title>
+    <link rel="canonical" href="https://redhat-scholars.github.io/operators-sdk-tutorial/template-tutorial/02-helm.html">
+    <link rel="prev" href="01-setup.html">
     <meta name="generator" content="Antora 2.3.4">
     <link rel="stylesheet" href="../_/css/site.css">
 <link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
@@ -82,24 +82,24 @@
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="1">
+  <li class="nav-item is-current-page" data-depth="1">
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="02-helm.html">2. Helm Operator</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="02-helm.html#init">Scaffold Operator</a>
+    <a class="nav-link" href="#init">Scaffold Operator</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="02-helm.html#api">Create API</a>
+    <a class="nav-link" href="#api">Create API</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="02-helm.html#copy-helm-chart">Copy Helm Chart</a>
+    <a class="nav-link" href="#copy-helm-chart">Copy Helm Chart</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="02-helm.html#build-run">Build &amp; Run</a>
+    <a class="nav-link" href="#build-run">Build &amp; Run</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="02-helm.html#apply-cr">Apply CR</a>
+    <a class="nav-link" href="#apply-cr">Apply CR</a>
   </li>
 </ul>
   </li>
@@ -130,52 +130,106 @@
 <main class="article">
 <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
-  <a href="index.html" class="home-link is-current"></a>
+  <a href="index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Operators SDK</a></li>
-    <li><a href="index.html">Welcome to Template Tutorial</a></li>
+    <li><a href="02-helm.html">2. Helm Operator</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/redhat-scholars/operators-sdk-tutorial/edit/master/documentation/modules/ROOT/pages/index.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="https://github.com/redhat-scholars/operators-sdk-tutorial/edit/master/documentation/modules/ROOT/pages/02-helm.adoc">Edit this Page</a></div>
   </div>
   <div class="content">
 <article class="doc">
-<h1 class="page">Welcome to Template Tutorial</h1>
-<div class="sect1 text-center strong">
-<h2>Publish Services to Kubernetes</h2>
+<h1 class="page">Helm Chart as Operator</h1>
+<div class="sect1">
+<h2 id="init"><a class="anchor" href="#init"></a>Scaffold the new operator</h2>
+<div class="sectionbody">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">operator-sdk init --domain com.redhat --plugins helm</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api"><a class="anchor" href="#api"></a>Generate an API</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A Kubernetes tutorial to show how you can deploy a Java service to a Kubernetes cluster as it was a child game.</p>
+<p>Le&#8217;s create an API for our operator :</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">operator-sdk create api --group operators --version v1 --kind VisitorSite</code></pre>
 </div>
 </div>
 </div>
-<div class="sect1 tiles browse">
-<h2>Browse modules</h2>
+</div>
+<div class="sect1">
+<h2 id="copy-helm-chart"><a class="anchor" href="#copy-helm-chart"></a>Copy Helm Chart sample</h2>
 <div class="sectionbody">
-<div class="ulist tile">
-<div class="title"><a href="01-setup.html" class="page">Get Started</a></div>
-<ul>
-<li>
-<p><a href="01-setup.html#minikube" class="page">Minikube</a></p>
-</li>
-</ul>
+<div class="paragraph">
+<p>In your new project you have a folder : <code>helm-charts/visitorsite</code> , delete the content and replace it with the content from <code>$TUTORIAL_HOME/apps/helm</code></p>
 </div>
-<div class="ulist tile">
-<div class="title"><a href="#02-deploy.adoc" class="page unresolved">Deploying</a></div>
-<ul>
-<li>
-<p><a href="02-helm.html#init" class="page">Package the Application</a></p>
-</li>
-<li>
-<p><a href="#02-deploy.adoc#deploy" class="page unresolved">Deploy the Application</a></p>
-</li>
-</ul>
+</div>
+</div>
+<div class="sect1">
+<h2 id="build-run"><a class="anchor" href="#build-run"></a>Run your operator locally</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Be sure to be connected to a Kubernetes cluster and then run</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">make install run</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="apply-cr"><a class="anchor" href="#apply-cr"></a>Apply a Custom Resource</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can now apply a custom resource</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-adoc hljs" data-lang="adoc">apiVersion: operators.com.redhat/v1
+kind: VisitorSite
+metadata:
+  name: visitorsite-sample
+spec:
+  backend:
+    size: 1
+  frontend:
+    title: Operator Deployed Visitors Site</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl apply -f $TUTORIAL_HOME/apps/cr/visitorsite.yml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check the pods getting created :</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-adoc hljs" data-lang="adoc">kubectl get pods
+
+NAME                                 READY   STATUS    RESTARTS   AGE
+
+mysql-86c559bb7f-kjjvt               1/1     Running   0          28h
+
+visitors-backend-7489bb97dd-wggkt    1/1     Running   0          28h
+
+visitors-frontend-86df47fffc-d2bgl   1/1     Running   0          28h</code></pre>
+</div>
 </div>
 </div>
 </div>
 <nav class="pagination">
-  <span class="next"><a href="01-setup.html">1. Setup</a></span>
+  <span class="prev"><a href="01-setup.html">1. Setup</a></span>
 </nav>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
