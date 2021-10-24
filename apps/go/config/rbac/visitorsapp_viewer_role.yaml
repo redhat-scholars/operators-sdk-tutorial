@@ -1,0 +1,20 @@
+# permissions for end users to view visitorsapps.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: visitorsapp-viewer-role
+rules:
+- apiGroups:
+  - app.redhat-scholars.github.io
+  resources:
+  - visitorsapps
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - app.redhat-scholars.github.io
+  resources:
+  - visitorsapps/status
+  verbs:
+  - get

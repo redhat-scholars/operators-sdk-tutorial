@@ -1,0 +1,69 @@
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.6.1
+  creationTimestamp: null
+  name: visitorsapps.app.redhat-scholars.github.io
+spec:
+  group: app.redhat-scholars.github.io
+  names:
+    kind: VisitorsApp
+    listKind: VisitorsAppList
+    plural: visitorsapps
+    singular: visitorsapp
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        description: VisitorsApp is the Schema for the visitorsapps API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: VisitorsAppSpec defines the desired state of VisitorsApp
+            properties:
+              size:
+                format: int32
+                type: integer
+              title:
+                type: string
+            required:
+            - size
+            - title
+            type: object
+          status:
+            description: VisitorsAppStatus defines the observed state of VisitorsApp
+            properties:
+              backendImage:
+                type: string
+              frontendImage:
+                type: string
+            required:
+            - backendImage
+            - frontendImage
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

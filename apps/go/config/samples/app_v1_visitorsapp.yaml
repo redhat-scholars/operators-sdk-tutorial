@@ -1,0 +1,7 @@
+apiVersion: app.redhat-scholars.github.io/v1
+kind: VisitorsApp
+metadata:
+  name: visitorsapp-sample
+spec:
+  # Add fields here
+  foo: bar
