@@ -1,0 +1,7 @@
+apiVersion: app.redhat.com/v1
+kind: VisitorsApp
+metadata:
+  name: visitorsapp-sample
+spec:
+  size: 1
+  title: "My First Operator in Go!"
