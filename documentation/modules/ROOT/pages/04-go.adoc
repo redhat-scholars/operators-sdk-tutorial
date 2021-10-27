@@ -175,7 +175,7 @@ In this way, every Controller has a Reconciler object with a `Reconcile()` metho
 Here's our implementation: 
 
 [.console-input]
-[source,go,subs="+macros,+attributes"]
+[source,go]
 ----
 func (r *VisitorsAppReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
         log := ctrllog.FromContext(ctx)
