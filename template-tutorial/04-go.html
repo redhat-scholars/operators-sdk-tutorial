@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Go Operator :: Operators SDK</title>
+    <link rel="canonical" href="https://redhat-scholars.github.io/operators-sdk-tutorial/template-tutorial/04-go.html">
+    <link rel="prev" href="03-ansible.html">
+    <meta name="generator" content="Antora 2.3.4">
+    <link rel="stylesheet" href="../_/css/site.css">
+<link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img
+          src="../_/img/header_logo.png" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" href="https://redhat-scholars.github.io/operators-sdk-tutorial">Operators SDK</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Books</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">CheatSheets</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">CheatSheet A</a>
+            <a class="navbar-item" href="#">CheatSheet B</a>
+            <a class="navbar-item" href="#">CheatSheet C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Upcoming Events</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Event A</a>
+            <a class="navbar-item" href="#">Event B</a>
+            <a class="navbar-item" href="#">Event C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Tutorial A</a>
+            <a class="navbar-item" href="#">Tutorial B</a>
+            <a class="navbar-item" href="#">Tutorial C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="template-tutorial" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html">Operators SDK</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-setup.html">1. Setup</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-setup.html#prerequisite">Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-setup.html#minikube">Setup Minikube</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="02-helm.html">2. Helm Operator</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-helm.html#init">Scaffold Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-helm.html#api">Create API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-helm.html#copy-helm-chart">Copy Helm Chart</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-helm.html#build-run">Build &amp; Run</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-helm.html#apply-cr">Apply CR</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-ansible.html">3. Ansible Operator</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-ansible.html#init">Scaffold Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-ansible.html#api">Create API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-ansible.html#copy-helm-chart">Copy Ansible Role</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-ansible.html#edit-watcher">Update watches</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-ansible.html#build-run">Build &amp; Run</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-ansible.html#apply-cr">Apply CR</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-go.html">4. Go Operator</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#init">Scaffold Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#api">Create API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#api-definition">API definition</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#generate-crd">Generate CRDs</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#controllers">Controllers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#build-run">Build &amp; Run</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#apply-cr">Apply CR</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#build-and-push">Build and Push the Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#deploy">Deploy to Kubernetes</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Operators SDK</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Operators SDK</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Operators SDK</a></li>
+    <li><a href="04-go.html">4. Go Operator</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/redhat-scholars/operators-sdk-tutorial/edit/master/documentation/modules/ROOT/pages/04-go.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Go Operator</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this section we implement an Operator in Go which will define some Custom Resource to control and deploy a 3-tier app (Fronted + Backend + DB).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="init"><a class="anchor" href="#init"></a>Scaffold the new operator</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Create a new directory on your machine, for instance : <code>$HOME/visitors-operator</code></p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">operator-sdk init --domain redhat.com --repo github.com/redhat-scholars/visitors-operator</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api"><a class="anchor" href="#api"></a>Generate an API</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Le&#8217;s create an API for our operator :</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">operator-sdk create api --group=app --version=v1 --kind=VisitorsApp --resource --controller</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will scaffold your operator&#8217;s resource API at <code>$HOME/visitors-operator/api/v1/visitorsapp_types.go</code> and the controller at <code>$HOME/visitors-operator/controllers/visitorsapp_controller.go</code>.</p>
+</div>
+<div class="paragraph">
+<p>In general, it’s recommended to have one controller responsible for manage each API created for the project to properly follow the design goals set by controller-runtime.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api-definition"><a class="anchor" href="#api-definition"></a>API definition</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To begin, we will represent our API by defining the <code>VisitorApp</code> type, which will have a VisitorAppSpec.Size field to set the quantity of memcached instances (CRs) to be deployed, and a Title</p>
+</div>
+<div class="paragraph">
+<p>Open generated API:
+<code>$HOME/visitors-operator/api/v1/visitorsapp_types.go</code></p>
+</div>
+<div class="paragraph">
+<p>Fill these sections with the following:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-go hljs" data-lang="go">type VisitorsAppSpec struct {
+        // INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
+        // Important: Run "make" to regenerate code after modifying this file
+
+        Size  int32  `json:"size"`
+        Title string `json:"title"`
+}</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-go hljs" data-lang="go">// VisitorsAppStatus defines the observed state of VisitorsApp
+type VisitorsAppStatus struct {
+        // INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
+        // Important: Run "make" to regenerate code after modifying this file
+
+        BackendImage  string `json:"backendImage"`
+        FrontendImage string `json:"frontendImage"`
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can refer to the whole file in <code>$TUTORIAL_HOME/apps/go/api/v1/visitorsapp_types.go</code>.</p>
+</div>
+<div class="paragraph">
+<p>After modifying the *_types.go file always run the following command to update the generated code for that resource type:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">make generate</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The above makefile target will invoke the controller-gen utility to update the api/v1/zz_generated.deepcopy.go file to ensure our API’s Go type definitons implement the runtime.Object interface that all Kind types must implement.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="generate-crd"><a class="anchor" href="#generate-crd"></a>Generate CRDs</h2>
+<div class="sectionbody">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">make manifests</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will invoke <code>controller-gen</code> utility to generate the CRD manifests at <code>config/crd/bases/app.redhat.com_visitorsapps.yaml</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.6.1
+  creationTimestamp: null
+  name: visitorsapps.app.redhat.com
+spec:
+  group: app.redhat.com
+  names:
+    kind: VisitorsApp
+    listKind: VisitorsAppList
+    plural: visitorsapps
+    singular: visitorsapp
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        description: VisitorsApp is the Schema for the visitorsapps API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: <a href="https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'" class="bare">https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'</a>
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: <a href="https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'" class="bare">https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'</a>
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: VisitorsAppSpec defines the desired state of VisitorsApp
+            properties:
+              size:
+                format: int32
+                type: integer
+              title:
+                type: string
+            required:
+            - size
+            - title
+            type: object
+          status:
+            description: VisitorsAppStatus defines the observed state of VisitorsApp
+            properties:
+              backendImage:
+                type: string
+              frontendImage:
+                type: string
+            required:
+            - backendImage
+            - frontendImage
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="controllers"><a class="anchor" href="#controllers"></a>Controllers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="https://kubernetes.io/docs/concepts/architecture/controller/">Controllers</a> are core components in Kubernetes and is where you operator logic takes place.</p>
+</div>
+<div class="paragraph">
+<p>The reconcile function is responsible for enforcing the desired CR state on the actual state of the system. It runs each time an event occurs on a watched CR or resource, and will return some value depending on whether those states match or not.</p>
+</div>
+<div class="paragraph">
+<p>In this way, every Controller has a Reconciler object with a <code>Reconcile()</code> method that implements the reconcile loop.</p>
+</div>
+<div class="paragraph">
+<p>Here&#8217;s our implementation:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-go hljs" data-lang="go">func (r *VisitorsAppReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+        log := ctrllog.FromContext(ctx)
+
+        log.Info("Reconciling VisitorsApp", "Request.Namespace", req.Namespace, "Request.Name", req.Name)
+
+        // Fetch the VisitorsApp instance
+        v := &amp;appv1.VisitorsApp{}
+        err := r.Client.Get(context.TODO(), req.NamespacedName, v)
+        if err != nil {
+                if errors.IsNotFound(err) {
+                        // Request object not found, could have been deleted after ctrl req.
+                        // Owned objects are automatically garbage collected. For additional cleanup logic use finalizers.
+                        // Return and don't requeue
+                        return ctrl.Result{}, nil
+                }
+                // Error reading the object - requeue the req.
+                return ctrl.Result{}, err
+        }
+
+        var result *ctrl.Result
+
+        // == MySQL ==========
+        result, err = r.ensureSecret(req, v, r.mysqlAuthSecret(v))
+        if result != nil {
+                return *result, err
+        }
+
+        result, err = r.ensureDeployment(req, v, r.mysqlDeployment(v))
+        if result != nil {
+                return *result, err
+        }
+
+        result, err = r.ensureService(req, v, r.mysqlService(v))
+        if result != nil {
+                return *result, err
+        }
+
+        mysqlRunning := r.isMysqlUp(v)
+
+        if !mysqlRunning {
+                // If MySQL isn't running yet, requeue the ctrl
+                // to run again after a delay
+                delay := time.Second * time.Duration(5)
+
+                log.Info(fmt.Sprintf("MySQL isn't running, waiting for %s", delay))
+                return ctrl.Result{RequeueAfter: delay}, nil
+        }
+
+        // == Visitors Backend  ==========
+        result, err = r.ensureDeployment(req, v, r.backendDeployment(v))
+        if result != nil {
+                return *result, err
+        }
+
+        result, err = r.ensureService(req, v, r.backendService(v))
+        if result != nil {
+                return *result, err
+        }
+
+        err = r.updateBackendStatus(v)
+        if err != nil {
+                // Requeue the req if the status could not be updated
+                return ctrl.Result{}, err
+        }
+
+        result, err = r.handleBackendChanges(v)
+        if result != nil {
+                return *result, err
+        }
+
+        // == Visitors Frontend ==========
+        result, err = r.ensureDeployment(req, v, r.frontendDeployment(v))
+        if result != nil {
+                return *result, err
+        }
+
+        result, err = r.ensureService(req, v, r.frontendService(v))
+        if result != nil {
+                return *result, err
+        }
+
+        err = r.updateFrontendStatus(v)
+        if err != nil {
+                // Requeue the req
+                return ctrl.Result{}, err
+        }
+
+        result, err = r.handleFrontendChanges(v)
+        if result != nil {
+                return *result, err
+        }
+
+        // == Finish ==========
+        // Everything went fine, don't requeue
+
+        return ctrl.Result{}, nil
+}
+
+// SetupWithManager sets up the controller with the Manager.
+func (r *VisitorsAppReconciler) SetupWithManager(mgr ctrl.Manager) error {
+        return ctrl.NewControllerManagedBy(mgr).
+                For(&amp;appv1.VisitorsApp{}).
+                Complete(r)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Copy the controllers logic and all dependencies such as <code>common.go</code>, <code>backend.go</code>, <code>frontend.go</code> and <code>mysql.go</code> into your operator controllers dir:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cp $TUTORIAL_HOME/apps/go/controllers/* $HOME/visitors-operator/controllers/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Download dependencies:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd $HOME/visitors-operator
+go get k8s.io/api/apps/v1@v0.21.2</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="build-run"><a class="anchor" href="#build-run"></a>Run your operator locally</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Be sure to be connected to a Kubernetes cluster and then run</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">make install run</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">/home/bluesman/visitors-operator/bin/controller-gen "crd:trivialVersions=true,preserveUnknownFields=false" rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+go: creating new go.mod: module tmp
+Downloading sigs.k8s.io/kustomize/kustomize/v3@v3.8.7
+go get: added sigs.k8s.io/kustomize/kustomize/v3 v3.8.7
+/home/bluesman/visitors-operator/bin/kustomize build config/crd | kubectl apply -f -
+customresourcedefinition.apiextensions.k8s.io/visitorsapps.app.redhat.com created
+/home/bluesman/visitors-operator/bin/controller-gen object:headerFile="hack/boilerplate.go.txt" paths="./..."
+go fmt ./...
+api/v1/visitorsapp_types.go
+go vet ./...
+go run ./main.go
+2021-10-28T00:20:13.875+0200    INFO    controller-runtime.metrics      metrics server is starting to listen    {"addr": ":8080"}
+2021-10-28T00:20:13.876+0200    INFO    setup   starting manager
+2021-10-28T00:20:13.876+0200    INFO    controller-runtime.manager      starting metrics server {"path": "/metrics"}
+2021-10-28T00:20:13.876+0200    INFO    controller-runtime.manager.controller.visitorsapp       Starting EventSource    {"reconciler group": "app.redhat.com", "reconciler kind": "VisitorsApp", "source": "kind source: /, Kind="}
+2021-10-28T00:20:13.877+0200    INFO    controller-runtime.manager.controller.visitorsapp       Starting Controller     {"reconciler group": "app.redhat.com", "reconciler kind": "VisitorsApp"}
+2021-10-28T00:20:14.178+0200    INFO    controller-runtime.manager.controller.visitorsapp       Starting workers        {"reconciler group": "app.redhat.com", "reconciler kind": "VisitorsApp", "worker count": 1}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="apply-cr"><a class="anchor" href="#apply-cr"></a>Apply a Custom Resource</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can now apply a custom resource</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: app.redhat.com/v1
+kind: VisitorsApp
+metadata:
+  name: visitorsapp-sample
+spec:
+  size: 1
+  title: "My First Operator in Go!"</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl apply -f $TUTORIAL_HOME/apps/cr/visitorsapp-go.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check the logs from the operator running locally:</p>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">2021-10-28T00:24:31.945+0200    INFO    controller-runtime.manager.controller.visitorsapp       Reconciling VisitorsApp {"reconciler group": "app.redhat.com", "reconciler kind": "VisitorsApp", "name": "visitorsapp-sample", "namespace": "demo", "Request.Namespace": "demo", "Request.Name": "visitorsapp-sample"}
+2021-10-28T00:24:40.847+0200    INFO    controller_visitorsapp  Creating a new secret   {"Secret.Namespace": "rbc-demo", "Secret.Name": "mysql-auth"}
+2021-10-28T00:24:41.337+0200    INFO    controller_visitorsapp  Creating a new Deployment       {"Deployment.Namespace": "demo", "Deployment.Name": "mysql"}
+2021-10-28T00:24:41.873+0200    INFO    controller_visitorsapp  Creating a new Service  {"Service.Namespace": "rbc-demo", "Service.Name": "mysql-service"}
+2021-10-28T00:24:42.061+0200    INFO    controller-runtime.manager.controller.visitorsapp       MySQL isn't running, waiting for 5s     {"reconciler group": "app.redhat.com", "reconciler kind": "VisitorsApp", "name": "visitorsapp-sample", "namespace": "demo"}
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check the pods getting created :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl get pods
+
+NAME                                 READY   STATUS    RESTARTS   AGE
+
+mysql-86c559bb7f-kjjvt               1/1     Running   0          28h
+
+visitors-backend-7489bb97dd-wggkt    1/1     Running   0          28h
+
+visitors-frontend-86df47fffc-d2bgl   1/1     Running   0          28h</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="build-and-push"><a class="anchor" href="#build-and-push"></a>Build and Push the Operator</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Your Makefile composes image tags either from values written at project initialization or from the CLI. In particular, IMAGE_TAG_BASE lets you define a common image registry, namespace, and partial name for all your image tags. Update this to another registry and/or namespace if the current value is incorrect. Afterwards you can update the IMG variable definition like so:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">IMAGE_TAG_BASE ?= quay.io/redhat-scholars/visitors-operator
+IMG ?= $(IMAGE_TAG_BASE):$(VERSION)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Be sure to be logged to your registry, then build and push your operator:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">make docker-build docker-push</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">/home/bluesman/visitors-operator/bin/controller-gen "crd:trivialVersions=true,preserveUnknownFields=false" rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+/home/bluesman/visitors-operator/bin/controller-gen object:headerFile="hack/boilerplate.go.txt" paths="./..."
+go fmt ./...
+go vet ./...
+KUBEBUILDER_ASSETS="/home/bluesman/.local/share/kubebuilder-envtest/k8s/1.21.4-linux-amd64" go test ./... -coverprofile cover.out
+?       github.com/redhat-scholars/visitors-operator    [no test files]
+?       github.com/redhat-scholars/visitors-operator/api/v1     [no test files]
+ok      github.com/redhat-scholars/visitors-operator/controllers        7.019s  coverage: 0.0% of statements
+docker build -t quay.io/redhat-scholars/visitors-operator:0.0.1 .
+STEP 1: FROM golang:1.16 AS builder
+STEP 2: WORKDIR /workspace
+--&gt; Using cache 4e85f8aa0ff71ec355dfc67058c21de8796486c2efa213525759565a4f872365
+--&gt; 4e85f8aa0ff
+STEP 3: COPY go.mod go.mod
+--&gt; Using cache 339ec79ec7d2c2477ed2c6f5e6b45c931006d6678da422a6d60579d3fb2efac0
+--&gt; 339ec79ec7d
+STEP 4: COPY go.sum go.sum
+--&gt; Using cache 34ac94423726a6554ccc30cf7ddcc276505fc07a2ae09f605acd515facbc2300
+--&gt; 34ac9442372
+STEP 5: RUN go mod download
+--&gt; Using cache 852bba1954f63dca4fdf98a64032bbbcf98fe46e8ca98bf44a3edc1b1298f4e4
+--&gt; 852bba1954f
+STEP 6: COPY main.go main.go
+--&gt; f82e4001343
+STEP 7: COPY api/ api/
+--&gt; f606a197b22
+STEP 8: COPY controllers/ controllers/
+--&gt; 163d54e246d
+STEP 9: RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o manager main.go
+--&gt; f0e9262884f
+STEP 10: FROM gcr.io/distroless/static:nonroot
+STEP 11: WORKDIR /
+--&gt; Using cache db7823b88929278c7c33c8490f3b2b90332ceec8d5e80c676feb3cd73681c71a
+--&gt; db7823b8892
+STEP 12: COPY --from=builder /workspace/manager .
+--&gt; 89c8123fcb3
+STEP 13: USER 65532:65532
+--&gt; 7f2206d5f4f
+STEP 14: ENTRYPOINT ["/manager"]
+STEP 15: COMMIT quay.io/redhat-scholars/visitors-operator:0.0.1
+--&gt; 87823cdb316
+87823cdb316360f9c1a0c9da11ebe414c1bfb513b03343fe579cf3dfae3a5ad4
+docker push quay.io/redhat-scholars/visitors-operator:0.0.1
+Getting image source signatures
+Copying blob 8dd1e0231136 done
+Copying blob c0d270ab7e0d skipped: already exists
+Copying config 87823cdb31 done
+Writing manifest to image destination
+Copying config 87823cdb31 [--------------------------------------] 0.0b / 1.2KiB
+Writing manifest to image destination
+Writing manifest to image destination
+Storing signatures</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The version is incremental, first one is <code>0.0.1</code> so that your container image will look like similar to this:</p>
+</div>
+<div class="paragraph">
+<p><code>quay.io/redhat-scholars/visitors-operator:0.0.1</code></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deploy"><a class="anchor" href="#deploy"></a>Deploy to Kubernetes</h2>
+<div class="sectionbody">
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">make deploy</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">/home/bluesman/visitors-operator/bin/controller-gen "crd:trivialVersions=true,preserveUnknownFields=false" rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+cd config/manager &amp;&amp; /home/bluesman/visitors-operator/bin/kustomize edit set image controller=quay.io/redhat-scholars/visitors-operator:0.0.1
+/home/bluesman/visitors-operator/bin/kustomize build config/default | kubectl apply -f -
+I1028 00:36:45.121764   21692 request.go:645]
+namespace/visitors-operator-system created
+customresourcedefinition.apiextensions.k8s.io/visitorsapps.app.redhat.com configured
+serviceaccount/visitors-operator-controller-manager created
+role.rbac.authorization.k8s.io/visitors-operator-leader-election-role created
+clusterrole.rbac.authorization.k8s.io/visitors-operator-manager-role created
+clusterrole.rbac.authorization.k8s.io/visitors-operator-metrics-reader created
+clusterrole.rbac.authorization.k8s.io/visitors-operator-proxy-role created
+rolebinding.rbac.authorization.k8s.io/visitors-operator-leader-election-rolebinding created
+clusterrolebinding.rbac.authorization.k8s.io/visitors-operator-manager-rolebinding created
+clusterrolebinding.rbac.authorization.k8s.io/visitors-operator-proxy-rolebinding created
+configmap/visitors-operator-manager-config created
+service/visitors-operator-controller-manager-metrics-service created
+deployment.apps/visitors-operator-controller-manager created</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check if operator is present:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl get pods -n visitors-operator-system</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">NAME                                                    READY   STATUS    RESTARTS      AGE
+visitors-operator-controller-manager-7f4b4cc4c7-z2xqm   2/2     Running   1 (29s ago)   2m43s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Get this complete example from this repo: <a href="https://github.com/redhat-scholars/visitors-operator">Visitors Operator Example</a></p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="03-ansible.html">3. Ansible Operator</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

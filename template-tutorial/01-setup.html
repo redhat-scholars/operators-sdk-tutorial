@@ -128,6 +128,39 @@
   </li>
 </ul>
   </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-go.html">4. Go Operator</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-go.html#init">Scaffold Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-go.html#api">Create API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-go.html#api-definition">API definition</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-go.html#generate-crd">Generate CRDs</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-go.html#controllers">Controllers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-go.html#build-run">Build &amp; Run</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-go.html#apply-cr">Apply CR</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-go.html#build-and-push">Build and Push the Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-go.html#deploy">Deploy to Kubernetes</a>
+  </li>
+</ul>
+  </li>
 </ul>
   </li>
 </ul>
@@ -317,11 +350,19 @@ Although they are used in the tutorial, you could use others without any problem
 <p>Having <code>minikube</code> installed and in your <code>PATH</code>, then run:</p>
 </div>
 <div class="paragraph">
-<p><strong>MacOS / Linux:</strong></p>
+<p><strong>MacOS</strong></p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version=v1.18.6 --vm-driver=virtualbox -p my_profile</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Linux</strong></p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version=v1.18.6 --vm-driver=kvm2 -p my_profile</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -337,13 +378,13 @@ Although they are used in the tutorial, you could use others without any problem
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">❌  profile "my_profile" not found
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">😄  [my_profile] minikube v1.20.0 on Darwin 11.3
 ✅  Created a new profile : my_profile
 ✅  minikube profile was successfully set to my_profile
-😄  [default] minikube v1.12.1 on Darwin 10.15.2
+😄  [default] minikube v1.12.1 on Darwin 11.3
 ✨  Selecting 'virtualbox' driver from user configuration (alternates: [hyperkit])
 🔥  Creating virtualbox VM (CPUs=2, Memory=8192MB, Disk=50000MB) ...
-🐳  Preparing Kubernetes v1.18.6 on Docker '19.03.5' ...
+🐳  Preparing Kubernetes v1.18.6 on Docker '20.10.6' ...
     ▪ apiserver.enable-admission-plugins=LimitRanger,NamespaceExists,NamespaceLifecycle,ResourceQuota,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook
 🚜  Pulling images ...
 🚀  Launching Kubernetes ...
@@ -379,21 +420,16 @@ Once you have your cluster, you can download the latest OpenShift client(oc) fro
 </div>
 </div>
 <div class="paragraph">
-<p>The output should show oc version &gt;=4.2:</p>
+<p>The output should show oc version &gt;=4.7:</p>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Client Version: openshift-clients-4.3.0-201910250623-88-g6a937dfe
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Client Version: 4.7.0-202102130115.p0-c66c03f
 Kubernetes Version: v1.18.6</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Then login into the cluster and run:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc new-project my_profile</code></pre>
-</div>
+<p>Then login into the OpenShift cluster using <code>oc login</code></p>
 </div>
 </div>
 </div>
