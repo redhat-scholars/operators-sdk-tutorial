@@ -1,0 +1,523 @@
+= Go Operator
+include::_attributes.adoc[]
+
+In this section we implement an Operator in Go which will define some Custom Resource to control and deploy a 3-tier app (Fronted + Backend + DB).
+
+[#init]
+== Scaffold the new operator
+
+Create a new directory on your machine, for instance : `$HOME/visitors-operator`
+
+[.console-input]
+[source, bash,subs="+macros,+attributes"]
+----
+operator-sdk init --domain redhat.com --repo github.com/redhat-scholars/visitors-operator
+----
+
+[#api]
+== Generate an API
+
+Le's create an API for our operator : 
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+operator-sdk create api --group=app --version=v1 --kind=VisitorsApp --resource --controller
+----
+
+This will scaffold your operator's resource API at `$HOME/visitors-operator/api/v1/visitorsapp_types.go` and the controller at `$HOME/visitors-operator/controllers/visitorsapp_controller.go`.
+
+In general, it’s recommended to have one controller responsible for manage each API created for the project to properly follow the design goals set by controller-runtime.
+
+
+
+[#api-definition]
+== API definition
+
+
+To begin, we will represent our API by defining the `VisitorApp` type, which will have a VisitorAppSpec.Size field to set the quantity of memcached instances (CRs) to be deployed, and a Title 
+
+Open generated API:
+`$HOME/visitors-operator/api/v1/visitorsapp_types.go`
+
+Fill these sections with the following:
+
+[.console-input]
+[source,go,subs="+macros,+attributes"]
+----
+type VisitorsAppSpec struct {
+        // INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
+        // Important: Run "make" to regenerate code after modifying this file
+
+        Size  int32  `json:"size"`
+        Title string `json:"title"`
+}
+----
+
+[.console-input]
+[source,go,subs="+macros,+attributes"]
+----
+// VisitorsAppStatus defines the observed state of VisitorsApp
+type VisitorsAppStatus struct {
+        // INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
+        // Important: Run "make" to regenerate code after modifying this file
+
+        BackendImage  string `json:"backendImage"`
+        FrontendImage string `json:"frontendImage"`
+}
+----
+
+You can refer to the whole file in `$TUTORIAL_HOME/apps/go/api/v1/visitorsapp_types.go`.
+
+After modifying the *_types.go file always run the following command to update the generated code for that resource type:
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+make generate
+----
+
+The above makefile target will invoke the controller-gen utility to update the api/v1/zz_generated.deepcopy.go file to ensure our API’s Go type definitons implement the runtime.Object interface that all Kind types must implement.
+
+[#generate-crd]
+== Generate CRDs
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+make manifests
+----
+
+This will invoke `controller-gen` utility to generate the CRD manifests at `config/crd/bases/app.redhat.com_visitorsapps.yaml`.
+
+[source,yaml,subs="+macros,+attributes"]
+----
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.6.1
+  creationTimestamp: null
+  name: visitorsapps.app.redhat.com
+spec:
+  group: app.redhat.com
+  names:
+    kind: VisitorsApp
+    listKind: VisitorsAppList
+    plural: visitorsapps
+    singular: visitorsapp
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        description: VisitorsApp is the Schema for the visitorsapps API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: VisitorsAppSpec defines the desired state of VisitorsApp
+            properties:
+              size:
+                format: int32
+                type: integer
+              title:
+                type: string
+            required:
+            - size
+            - title
+            type: object
+          status:
+            description: VisitorsAppStatus defines the observed state of VisitorsApp
+            properties:
+              backendImage:
+                type: string
+              frontendImage:
+                type: string
+            required:
+            - backendImage
+            - frontendImage
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+----
+
+
+[#controllers]
+== Controllers
+
+link:https://kubernetes.io/docs/concepts/architecture/controller/[Controllers] are core components in Kubernetes and is where you operator logic takes place.
+
+The reconcile function is responsible for enforcing the desired CR state on the actual state of the system. It runs each time an event occurs on a watched CR or resource, and will return some value depending on whether those states match or not.
+
+In this way, every Controller has a Reconciler object with a `Reconcile()` method that implements the reconcile loop. 
+
+Here's our implementation: 
+
+[.console-input]
+[source,go,subs="+macros,+attributes"]
+----
+func (r *VisitorsAppReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+        log := ctrllog.FromContext(ctx)
+
+        log.Info("Reconciling VisitorsApp", "Request.Namespace", req.Namespace, "Request.Name", req.Name)
+
+        // Fetch the VisitorsApp instance
+        v := &appv1.VisitorsApp{}
+        err := r.Client.Get(context.TODO(), req.NamespacedName, v)
+        if err != nil {
+                if errors.IsNotFound(err) {
+                        // Request object not found, could have been deleted after ctrl req.
+                        // Owned objects are automatically garbage collected. For additional cleanup logic use finalizers.
+                        // Return and don't requeue
+                        return ctrl.Result{}, nil
+                }
+                // Error reading the object - requeue the req.
+                return ctrl.Result{}, err
+        }
+
+        var result *ctrl.Result
+
+        // == MySQL ==========
+        result, err = r.ensureSecret(req, v, r.mysqlAuthSecret(v))
+        if result != nil {
+                return *result, err
+        }
+
+        result, err = r.ensureDeployment(req, v, r.mysqlDeployment(v))
+        if result != nil {
+                return *result, err
+        }
+
+        result, err = r.ensureService(req, v, r.mysqlService(v))
+        if result != nil {
+                return *result, err
+        }
+
+        mysqlRunning := r.isMysqlUp(v)
+
+        if !mysqlRunning {
+                // If MySQL isn't running yet, requeue the ctrl
+                // to run again after a delay
+                delay := time.Second * time.Duration(5)
+
+                log.Info(fmt.Sprintf("MySQL isn't running, waiting for %s", delay))
+                return ctrl.Result{RequeueAfter: delay}, nil
+        }
+
+        // == Visitors Backend  ==========
+        result, err = r.ensureDeployment(req, v, r.backendDeployment(v))
+        if result != nil {
+                return *result, err
+        }
+
+        result, err = r.ensureService(req, v, r.backendService(v))
+        if result != nil {
+                return *result, err
+        }
+
+        err = r.updateBackendStatus(v)
+        if err != nil {
+                // Requeue the req if the status could not be updated
+                return ctrl.Result{}, err
+        }
+
+        result, err = r.handleBackendChanges(v)
+        if result != nil {
+                return *result, err
+        }
+
+        // == Visitors Frontend ==========
+        result, err = r.ensureDeployment(req, v, r.frontendDeployment(v))
+        if result != nil {
+                return *result, err
+        }
+
+        result, err = r.ensureService(req, v, r.frontendService(v))
+        if result != nil {
+                return *result, err
+        }
+
+        err = r.updateFrontendStatus(v)
+        if err != nil {
+                // Requeue the req
+                return ctrl.Result{}, err
+        }
+
+        result, err = r.handleFrontendChanges(v)
+        if result != nil {
+                return *result, err
+        }
+
+        // == Finish ==========
+        // Everything went fine, don't requeue
+
+        return ctrl.Result{}, nil
+}
+
+// SetupWithManager sets up the controller with the Manager.
+func (r *VisitorsAppReconciler) SetupWithManager(mgr ctrl.Manager) error {
+        return ctrl.NewControllerManagedBy(mgr).
+                For(&appv1.VisitorsApp{}).
+                Complete(r)
+}
+----
+
+Copy the controllers logic and all dependencies such as `common.go`, `backend.go`, `frontend.go` and `mysql.go` into your operator controllers dir: 
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+cp $TUTORIAL_HOME/apps/go/controllers/* $HOME/visitors-operator/controllers/
+----
+ 
+Download dependencies:
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+cd $HOME/visitors-operator
+go get k8s.io/api/apps/v1@v0.21.2
+----
+
+
+
+[#build-run]
+== Run your operator locally
+
+Be sure to be connected to a Kubernetes cluster and then run 
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+make install run
+----
+
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
+/home/bluesman/visitors-operator/bin/controller-gen "crd:trivialVersions=true,preserveUnknownFields=false" rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+go: creating new go.mod: module tmp
+Downloading sigs.k8s.io/kustomize/kustomize/v3@v3.8.7
+go get: added sigs.k8s.io/kustomize/kustomize/v3 v3.8.7
+/home/bluesman/visitors-operator/bin/kustomize build config/crd | kubectl apply -f -
+customresourcedefinition.apiextensions.k8s.io/visitorsapps.app.redhat.com created
+/home/bluesman/visitors-operator/bin/controller-gen object:headerFile="hack/boilerplate.go.txt" paths="./..."
+go fmt ./...
+api/v1/visitorsapp_types.go
+go vet ./...
+go run ./main.go
+2021-10-28T00:20:13.875+0200    INFO    controller-runtime.metrics      metrics server is starting to listen    {"addr": ":8080"}
+2021-10-28T00:20:13.876+0200    INFO    setup   starting manager
+2021-10-28T00:20:13.876+0200    INFO    controller-runtime.manager      starting metrics server {"path": "/metrics"}
+2021-10-28T00:20:13.876+0200    INFO    controller-runtime.manager.controller.visitorsapp       Starting EventSource    {"reconciler group": "app.redhat.com", "reconciler kind": "VisitorsApp", "source": "kind source: /, Kind="}
+2021-10-28T00:20:13.877+0200    INFO    controller-runtime.manager.controller.visitorsapp       Starting Controller     {"reconciler group": "app.redhat.com", "reconciler kind": "VisitorsApp"}
+2021-10-28T00:20:14.178+0200    INFO    controller-runtime.manager.controller.visitorsapp       Starting workers        {"reconciler group": "app.redhat.com", "reconciler kind": "VisitorsApp", "worker count": 1}
+----
+
+[#apply-cr]
+== Apply a Custom Resource 
+
+You can now apply a custom resource 
+
+[.console-input]
+[source,yaml,subs="+macros,+attributes"]
+----
+apiVersion: app.redhat.com/v1
+kind: VisitorsApp
+metadata:
+  name: visitorsapp-sample
+spec:
+  size: 1
+  title: "My First Operator in Go!"
+----
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+kubectl apply -f $TUTORIAL_HOME/apps/cr/visitorsapp-go.yaml
+----
+
+Check the logs from the operator running locally:
+
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
+2021-10-28T00:24:31.945+0200    INFO    controller-runtime.manager.controller.visitorsapp       Reconciling VisitorsApp {"reconciler group": "app.redhat.com", "reconciler kind": "VisitorsApp", "name": "visitorsapp-sample", "namespace": "demo", "Request.Namespace": "demo", "Request.Name": "visitorsapp-sample"}
+2021-10-28T00:24:40.847+0200    INFO    controller_visitorsapp  Creating a new secret   {"Secret.Namespace": "rbc-demo", "Secret.Name": "mysql-auth"}
+2021-10-28T00:24:41.337+0200    INFO    controller_visitorsapp  Creating a new Deployment       {"Deployment.Namespace": "demo", "Deployment.Name": "mysql"}
+2021-10-28T00:24:41.873+0200    INFO    controller_visitorsapp  Creating a new Service  {"Service.Namespace": "rbc-demo", "Service.Name": "mysql-service"}
+2021-10-28T00:24:42.061+0200    INFO    controller-runtime.manager.controller.visitorsapp       MySQL isn't running, waiting for 5s     {"reconciler group": "app.redhat.com", "reconciler kind": "VisitorsApp", "name": "visitorsapp-sample", "namespace": "demo"}
+...
+----
+
+Check the pods getting created :
+
+[source,bash,subs="+macros,+attributes"]
+----
+kubectl get pods
+
+NAME                                 READY   STATUS    RESTARTS   AGE
+
+mysql-86c559bb7f-kjjvt               1/1     Running   0          28h
+
+visitors-backend-7489bb97dd-wggkt    1/1     Running   0          28h
+
+visitors-frontend-86df47fffc-d2bgl   1/1     Running   0          28h
+
+----
+
+[#build-and-push]
+== Build and Push the Operator
+
+Your Makefile composes image tags either from values written at project initialization or from the CLI. In particular, IMAGE_TAG_BASE lets you define a common image registry, namespace, and partial name for all your image tags. Update this to another registry and/or namespace if the current value is incorrect. Afterwards you can update the IMG variable definition like so:
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+IMAGE_TAG_BASE ?= quay.io/redhat-scholars/visitors-operator
+IMG ?= $(IMAGE_TAG_BASE):$(VERSION)
+----
+
+Be sure to be logged to your registry, then build and push your operator: 
+
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+make docker-build docker-push
+----
+
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
+/home/bluesman/visitors-operator/bin/controller-gen "crd:trivialVersions=true,preserveUnknownFields=false" rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+/home/bluesman/visitors-operator/bin/controller-gen object:headerFile="hack/boilerplate.go.txt" paths="./..."
+go fmt ./...
+go vet ./...
+KUBEBUILDER_ASSETS="/home/bluesman/.local/share/kubebuilder-envtest/k8s/1.21.4-linux-amd64" go test ./... -coverprofile cover.out
+?       github.com/redhat-scholars/visitors-operator    [no test files]
+?       github.com/redhat-scholars/visitors-operator/api/v1     [no test files]
+ok      github.com/redhat-scholars/visitors-operator/controllers        7.019s  coverage: 0.0% of statements
+docker build -t quay.io/redhat-scholars/visitors-operator:0.0.1 .
+STEP 1: FROM golang:1.16 AS builder
+STEP 2: WORKDIR /workspace
+--> Using cache 4e85f8aa0ff71ec355dfc67058c21de8796486c2efa213525759565a4f872365
+--> 4e85f8aa0ff
+STEP 3: COPY go.mod go.mod
+--> Using cache 339ec79ec7d2c2477ed2c6f5e6b45c931006d6678da422a6d60579d3fb2efac0
+--> 339ec79ec7d
+STEP 4: COPY go.sum go.sum
+--> Using cache 34ac94423726a6554ccc30cf7ddcc276505fc07a2ae09f605acd515facbc2300
+--> 34ac9442372
+STEP 5: RUN go mod download
+--> Using cache 852bba1954f63dca4fdf98a64032bbbcf98fe46e8ca98bf44a3edc1b1298f4e4
+--> 852bba1954f
+STEP 6: COPY main.go main.go
+--> f82e4001343
+STEP 7: COPY api/ api/
+--> f606a197b22
+STEP 8: COPY controllers/ controllers/
+--> 163d54e246d
+STEP 9: RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o manager main.go
+--> f0e9262884f
+STEP 10: FROM gcr.io/distroless/static:nonroot
+STEP 11: WORKDIR /
+--> Using cache db7823b88929278c7c33c8490f3b2b90332ceec8d5e80c676feb3cd73681c71a
+--> db7823b8892
+STEP 12: COPY --from=builder /workspace/manager .
+--> 89c8123fcb3
+STEP 13: USER 65532:65532
+--> 7f2206d5f4f
+STEP 14: ENTRYPOINT ["/manager"]
+STEP 15: COMMIT quay.io/redhat-scholars/visitors-operator:0.0.1
+--> 87823cdb316
+87823cdb316360f9c1a0c9da11ebe414c1bfb513b03343fe579cf3dfae3a5ad4
+docker push quay.io/redhat-scholars/visitors-operator:0.0.1
+Getting image source signatures
+Copying blob 8dd1e0231136 done  
+Copying blob c0d270ab7e0d skipped: already exists  
+Copying config 87823cdb31 done  
+Writing manifest to image destination
+Copying config 87823cdb31 [--------------------------------------] 0.0b / 1.2KiB
+Writing manifest to image destination
+Writing manifest to image destination
+Storing signatures
+----
+
+The version is incremental, first one is `0.0.1` so that your container image will look like similar to this: 
+
+`quay.io/redhat-scholars/visitors-operator:0.0.1`
+
+
+[#deploy]
+== Deploy to Kubernetes
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+make deploy
+----
+
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
+/home/bluesman/visitors-operator/bin/controller-gen "crd:trivialVersions=true,preserveUnknownFields=false" rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+cd config/manager && /home/bluesman/visitors-operator/bin/kustomize edit set image controller=quay.io/redhat-scholars/visitors-operator:0.0.1
+/home/bluesman/visitors-operator/bin/kustomize build config/default | kubectl apply -f -
+I1028 00:36:45.121764   21692 request.go:645] 
+namespace/visitors-operator-system created
+customresourcedefinition.apiextensions.k8s.io/visitorsapps.app.redhat.com configured
+serviceaccount/visitors-operator-controller-manager created
+role.rbac.authorization.k8s.io/visitors-operator-leader-election-role created
+clusterrole.rbac.authorization.k8s.io/visitors-operator-manager-role created
+clusterrole.rbac.authorization.k8s.io/visitors-operator-metrics-reader created
+clusterrole.rbac.authorization.k8s.io/visitors-operator-proxy-role created
+rolebinding.rbac.authorization.k8s.io/visitors-operator-leader-election-rolebinding created
+clusterrolebinding.rbac.authorization.k8s.io/visitors-operator-manager-rolebinding created
+clusterrolebinding.rbac.authorization.k8s.io/visitors-operator-proxy-rolebinding created
+configmap/visitors-operator-manager-config created
+service/visitors-operator-controller-manager-metrics-service created
+deployment.apps/visitors-operator-controller-manager created
+----
+
+Check if operator is present: 
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+kubectl get pods -n visitors-operator-system
+----
+
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
+NAME                                                    READY   STATUS    RESTARTS      AGE
+visitors-operator-controller-manager-7f4b4cc4c7-z2xqm   2/2     Running   1 (29s ago)   2m43s
+----
+
+Get this complete example from this repo: link:https://github.com/redhat-scholars/visitors-operator[Visitors Operator Example]
+
+
+
+
