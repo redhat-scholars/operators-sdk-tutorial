@@ -441,6 +441,22 @@ Status:
 Events:            <none>
 ----
 
+Access the VisitorsApp! A kubernetes service for the frontend has been created (`visitorsapp-sample-frontend-service`) and it is exposed as a `NodePort` on port `30686`.
+
+On Minikube, get Minikube IP and access the app:
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+IP=$(minikube ip -p operators)
+PORT=$(kubectl get service/visitorsapp-sample-frontend-service -o jsonpath="{.spec.ports[*].nodePort}")
+curl $IP:$PORT
+----
+
+Or open it in the browser:
+
+image::visitorsapp.png[Visitors App]
+
 [#build-and-push]
 == Build and Push the Operator
 
