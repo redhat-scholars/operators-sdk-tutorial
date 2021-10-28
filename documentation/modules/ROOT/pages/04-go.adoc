@@ -1,7 +1,11 @@
 = Go Operator
 include::_attributes.adoc[]
 
-In this section we implement an Operator in Go which will define some Custom Resource to control and deploy a 3-tier app (Frontend + Backend + DB).
+In this section we implement an Operator in Go which will define some Custom Resource to control and deploy a 3-tier app:
+
+* *Frontend*: React app from `docker.io/jdob/visitors-webui:1.0.0
+* *Backend*: Python app from `docker.io/jdob/visitors-service:1.0.0`
+* *DB*: MySQL 5.7 from `docker.io/library/mysql:5.7`
 
 [#init]
 == Scaffold the new operator
@@ -171,6 +175,9 @@ link:https://kubernetes.io/docs/concepts/architecture/controller/[Controllers] a
 The reconcile function is responsible for enforcing the desired CR state on the actual state of the system. It runs each time an event occurs on a watched CR or resource, and will return some value depending on whether those states match or not.
 
 In this way, every Controller has a Reconciler object with a `Reconcile()` method that implements the reconcile loop. 
+
+.Hausenblas, Schimanski. Programming Kubernetes. O’Reilly, 2019.
+image::controllers.png[The Reconcile Loop]
 
 Here's our implementation: 
 
@@ -387,7 +394,51 @@ mysql-86c559bb7f-kjjvt               1/1     Running   0          28h
 visitors-backend-7489bb97dd-wggkt    1/1     Running   0          28h
 
 visitors-frontend-86df47fffc-d2bgl   1/1     Running   0          28h
+----
 
+
+Check your newly create CR: 
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+kubectl get visitorsapp
+----
+
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
+NAME                 AGE
+visitorsapp-sample   1m
+----
+
+Get your VisitorApp status: 
+
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+kubectl describe visitorsapp visitorsapp-sample
+----
+
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
+Name:         visitorsapp-sample
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+API Version:  app.redhat.com/v1
+Kind:         VisitorsApp
+Metadata:
+  Creation Timestamp:  2021-10-28T07:39:34Z
+Spec:
+  Size:   1
+  Title:  My First Operator in Go!
+Status:
+  Backend Image:   jdob/visitors-service:1.0.0
+  Frontend Image:  jdob/visitors-webui:1.0.0
+Events:            <none>
 ----
 
 [#build-and-push]
