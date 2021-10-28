@@ -158,6 +158,9 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="#deploy">Deploy to Kubernetes</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#deploy-with-olm">Deploy to Kubernetes with OLM</a>
+  </li>
 </ul>
   </li>
 </ul>
@@ -732,6 +735,133 @@ deployment.apps/visitors-operator-controller-manager created</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">NAME                                                    READY   STATUS    RESTARTS      AGE
 visitors-operator-controller-manager-7f4b4cc4c7-z2xqm   2/2     Running   1 (29s ago)   2m43s</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deploy-with-olm"><a class="anchor" href="#deploy-with-olm"></a>Deploy to Kubernetes with OLM</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="https://github.com/operator-framework/operator-lifecycle-manager/">Operator Lifecycle Manager (OLM)</a> is a set of cluster resources that manage the lifecycle of an Operator. The Operator SDK supports both creating manifests for OLM deployment, and testing your Operator on an OLM-enabled Kubernetes cluster.</p>
+</div>
+<div class="paragraph">
+<p>Install OLM with the Operator SDK CLI:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">operator-sdk olm install</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Bundle your operator, then build and push the bundle image. The bundle target generates a bundle in the bundle directory containing manifests and metadata defining your operator. bundle-build and bundle-push build and push a bundle image defined by bundle.Dockerfile.</p>
+</div>
+<div class="paragraph">
+<p>This will create a new container image and will push it to your previously configured registry. e.g. <code>quay.io/redhat-scholars/visitors-operator-bundle:0.0.1</code>. The command below will prompt to fill info for your OLM managed operator:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">make bundle bundle-build bundle-push</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">home/bluesman/visitors-operator/bin/controller-gen "crd:trivialVersions=true,preserveUnknownFields=false" rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+operator-sdk generate kustomize manifests -q
+
+Display name for the operator (required):
+&gt; visitors-operator
+
+Description for the operator (required):
+&gt; 3-tier app operator backed example
+
+Provider's name for the operator (required):
+&gt; Red Hat
+
+Any relevant URL for the provider name (optional):
+&gt; <a href="https://github.com/redhat-scholars/operators-sdk-tutorial" class="bare">https://github.com/redhat-scholars/operators-sdk-tutorial</a>
+
+Comma-separated list of keywords for your operator (required):
+&gt; operatorsdk,devnation,redhat
+
+Comma-separated list of maintainers and their emails (e.g. 'name1:email1, name2:email2') (required):
+&gt; Natale Vinto:nvinto@redhat.com
+cd config/manager &amp;&amp; /home/bluesman/visitors-operator/bin/kustomize edit set image controller=quay.io/redhat-scholars/visitors-operator:0.0.1
+/home/bluesman/visitors-operator/bin/kustomize build config/manifests | operator-sdk generate bundle -q --overwrite --version 0.0.1
+INFO[0000] Creating bundle.Dockerfile
+INFO[0000] Creating bundle/metadata/annotations.yaml
+INFO[0000] Bundle metadata generated suceessfully
+operator-sdk bundle validate ./bundle
+INFO[0000] All validation tests have completed successfully
+docker build -f bundle.Dockerfile -t quay.io/redhat-scholars/visitors-operator-bundle:v0.0.1 .
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Finally run the bundle:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">operator-sdk run bundle  quay.io/redhat-scholars/visitors-operator-bundle:v0.0.1</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">INFO[0009] Successfully created registry pod: quay-io-redhat-scholars-visitors-operator-bundle-v0-0-1
+INFO[0009] Created CatalogSource: visitors-operator-catalog
+INFO[0009] OperatorGroup "operator-sdk-og" created
+INFO[0009] Created Subscription: visitors-operator-v0-0-1-sub
+INFO[0013] Approved InstallPlan install-9sdhh for the Subscription: visitors-operator-v0-0-1-sub
+INFO[0013] Waiting for ClusterServiceVersion "default/visitors-operator.v0.0.1" to reach 'Succeeded' phase
+INFO[0013]   Waiting for ClusterServiceVersion "default/visitors-operator.v0.0.1" to appear
+INFO[0026]   Found ClusterServiceVersion "default/visitors-operator.v0.0.1" phase: Pending
+INFO[0028]   Found ClusterServiceVersion "default/visitors-operator.v0.0.1" phase: Installing
+INFO[0038]   Found ClusterServiceVersion "default/visitors-operator.v0.0.1" phase: Succeeded
+INFO[0038] OLM has successfully installed "visitors-operator.v0.0.1"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Verify that a Subscription to your operator has been created:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl get subscriptions</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">NAME                           PACKAGE             SOURCE                      CHANNEL
+visitors-operator-v0-0-1-sub   visitors-operator   visitors-operator-catalog   alpha</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  labels:
+    name: visitors-operator-v0-0-1-sub
+spec:
+  channel: alpha
+  installPlanApproval: Manual
+  name: visitors-operator
+  source: visitors-operator-catalog
+  sourceNamespace: default
+  startingCSV: visitors-operator.v0.0.1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Verify that the operator installation has been successful:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl get csv</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">NAME                       DISPLAY             VERSION   REPLACES   PHASE
+visitors-operator.v0.0.1   visitors-operator   0.0.1                Succeeded</code></pre>
 </div>
 </div>
 <div class="paragraph">
