@@ -55,12 +55,12 @@ include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-c
 [#minikube]
 == Setup Kubernetes
 
-:profile: my_profile
+:profile: operators
 
 include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-common/master/kubernetes-setup.adoc[]
 
 == Get tutorial sources
 
 :tutorial-url: https://github.com/redhat-scholars/operators-sdk-tutorial
-:folder: my_folder
+:folder: operators-sdk-tutorial
 include::https://raw.githubusercontent.com/redhat-developer-demos/rhd-tutorial-common/master/download-sources.adoc[]
