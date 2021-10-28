@@ -519,6 +519,140 @@ NAME                                                    READY   STATUS    RESTAR
 visitors-operator-controller-manager-7f4b4cc4c7-z2xqm   2/2     Running   1 (29s ago)   2m43s
 ----
 
+[#deploy-with-olm]
+== Deploy to Kubernetes with OLM
+
+
+The link:https://github.com/operator-framework/operator-lifecycle-manager/[Operator Lifecycle Manager (OLM)] is a set of cluster resources that manage the lifecycle of an Operator. The Operator SDK supports both creating manifests for OLM deployment, and testing your Operator on an OLM-enabled Kubernetes cluster.
+
+Install OLM with the Operator SDK CLI:
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+operator-sdk olm install
+----
+
+Bundle your operator, then build and push the bundle image. The bundle target generates a bundle in the bundle directory containing manifests and metadata defining your operator. bundle-build and bundle-push build and push a bundle image defined by bundle.Dockerfile.
+
+This will create a new container image and will push it to your previously configured registry. e.g. `quay.io/redhat-scholars/visitors-operator-bundle:0.0.1`. The command below will prompt to fill info for your OLM managed operator:
+
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+make bundle bundle-build bundle-push
+----
+
+
+[.console-output,subs="+macros,+attributes"]
+[source,bash]
+----
+home/bluesman/visitors-operator/bin/controller-gen "crd:trivialVersions=true,preserveUnknownFields=false" rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+operator-sdk generate kustomize manifests -q
+
+Display name for the operator (required): 
+> visitors-operator
+
+Description for the operator (required): 
+> 3-tier app operator backed example
+
+Provider's name for the operator (required): 
+> Red Hat
+
+Any relevant URL for the provider name (optional): 
+> https://github.com/redhat-scholars/operators-sdk-tutorial
+
+Comma-separated list of keywords for your operator (required): 
+> operatorsdk,devnation,redhat
+
+Comma-separated list of maintainers and their emails (e.g. 'name1:email1, name2:email2') (required): 
+> Natale Vinto:nvinto@redhat.com                                           
+cd config/manager && /home/bluesman/visitors-operator/bin/kustomize edit set image controller=quay.io/redhat-scholars/visitors-operator:0.0.1
+/home/bluesman/visitors-operator/bin/kustomize build config/manifests | operator-sdk generate bundle -q --overwrite --version 0.0.1  
+INFO[0000] Creating bundle.Dockerfile                   
+INFO[0000] Creating bundle/metadata/annotations.yaml    
+INFO[0000] Bundle metadata generated suceessfully       
+operator-sdk bundle validate ./bundle
+INFO[0000] All validation tests have completed successfully 
+docker build -f bundle.Dockerfile -t quay.io/redhat-scholars/visitors-operator-bundle:v0.0.1 .
+...
+----
+
+Finally run the bundle:
+
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+operator-sdk run bundle  quay.io/redhat-scholars/visitors-operator-bundle:v0.0.1
+----
+
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
+INFO[0009] Successfully created registry pod: quay-io-redhat-scholars-visitors-operator-bundle-v0-0-1 
+INFO[0009] Created CatalogSource: visitors-operator-catalog 
+INFO[0009] OperatorGroup "operator-sdk-og" created      
+INFO[0009] Created Subscription: visitors-operator-v0-0-1-sub 
+INFO[0013] Approved InstallPlan install-9sdhh for the Subscription: visitors-operator-v0-0-1-sub 
+INFO[0013] Waiting for ClusterServiceVersion "default/visitors-operator.v0.0.1" to reach 'Succeeded' phase 
+INFO[0013]   Waiting for ClusterServiceVersion "default/visitors-operator.v0.0.1" to appear 
+INFO[0026]   Found ClusterServiceVersion "default/visitors-operator.v0.0.1" phase: Pending 
+INFO[0028]   Found ClusterServiceVersion "default/visitors-operator.v0.0.1" phase: Installing 
+INFO[0038]   Found ClusterServiceVersion "default/visitors-operator.v0.0.1" phase: Succeeded 
+INFO[0038] OLM has successfully installed "visitors-operator.v0.0.1" 
+----
+
+Verify that a Subscription to your operator has been created:
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+kubectl get subscriptions
+----
+
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
+NAME                           PACKAGE             SOURCE                      CHANNEL
+visitors-operator-v0-0-1-sub   visitors-operator   visitors-operator-catalog   alpha
+----
+
+[.console-input]
+[source,yaml,subs="+macros,+attributes"]
+----
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  labels:
+    name: visitors-operator-v0-0-1-sub
+spec:
+  channel: alpha
+  installPlanApproval: Manual
+  name: visitors-operator
+  source: visitors-operator-catalog
+  sourceNamespace: default
+  startingCSV: visitors-operator.v0.0.1
+----
+
+Verify that the operator installation has been successful: 
+
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+kubectl get csv
+----
+
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
+NAME                       DISPLAY             VERSION   REPLACES   PHASE
+visitors-operator.v0.0.1   visitors-operator   0.0.1                Succeeded
+----
+
+
 Get this complete example from this repo: link:https://github.com/redhat-scholars/visitors-operator[Visitors Operator Example]
 
 
