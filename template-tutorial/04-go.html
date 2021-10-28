@@ -205,7 +205,20 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>In this section we implement an Operator in Go which will define some Custom Resource to control and deploy a 3-tier app (Frontend + Backend + DB).</p>
+<p>In this section we implement an Operator in Go which will define some Custom Resource to control and deploy a 3-tier app:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Frontend</strong>: React app from `docker.io/jdob/visitors-webui:1.0.0</p>
+</li>
+<li>
+<p><strong>Backend</strong>: Python app from <code>docker.io/jdob/visitors-service:1.0.0</code></p>
+</li>
+<li>
+<p><strong>DB</strong>: MySQL 5.7 from <code>docker.io/library/mysql:5.7</code></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -389,6 +402,12 @@ status:
 </div>
 <div class="paragraph">
 <p>In this way, every Controller has a Reconciler object with a <code>Reconcile()</code> method that implements the reconcile loop.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/controllers.png" alt="The Reconcile Loop">
+</div>
+<div class="title">Figure 1. Hausenblas, Schimanski. Programming Kubernetes. O’Reilly, 2019.</div>
 </div>
 <div class="paragraph">
 <p>Here&#8217;s our implementation:</p>
@@ -606,6 +625,47 @@ mysql-86c559bb7f-kjjvt               1/1     Running   0          28h
 visitors-backend-7489bb97dd-wggkt    1/1     Running   0          28h
 
 visitors-frontend-86df47fffc-d2bgl   1/1     Running   0          28h</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check your newly create CR:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl get visitorsapp</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">NAME                 AGE
+visitorsapp-sample   1m</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Get your VisitorApp status:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kubectl describe visitorsapp visitorsapp-sample</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Name:         visitorsapp-sample
+Namespace:    default
+Labels:       &lt;none&gt;
+Annotations:  &lt;none&gt;
+API Version:  app.redhat.com/v1
+Kind:         VisitorsApp
+Metadata:
+  Creation Timestamp:  2021-10-28T07:39:34Z
+Spec:
+  Size:   1
+  Title:  My First Operator in Go!
+Status:
+  Backend Image:   jdob/visitors-service:1.0.0
+  Frontend Image:  jdob/visitors-webui:1.0.0
+Events:            &lt;none&gt;</code></pre>
 </div>
 </div>
 </div>
