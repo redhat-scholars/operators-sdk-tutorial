@@ -1,7 +1,7 @@
 = Go Operator
 include::_attributes.adoc[]
 
-In this section we implement an Operator in Go which will define some Custom Resource to control and deploy a 3-tier app (Fronted + Backend + DB).
+In this section we implement an Operator in Go which will define some Custom Resource to control and deploy a 3-tier app (Frontend + Backend + DB).
 
 [#init]
 == Scaffold the new operator
