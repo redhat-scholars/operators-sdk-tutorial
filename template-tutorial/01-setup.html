@@ -334,7 +334,7 @@ Although they are used in the tutorial, you could use others without any problem
 <h2 id="minikube"><a class="anchor" href="#minikube"></a>Setup Kubernetes</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The profile my_profile is created to run the tutorial:</p>
+<p>The profile operators is created to run the tutorial:</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -357,7 +357,7 @@ Although they are used in the tutorial, you could use others without any problem
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version=v1.18.6 --vm-driver=virtualbox -p my_profile</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version=v1.18.6 --vm-driver=virtualbox -p operators</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -365,7 +365,7 @@ Although they are used in the tutorial, you could use others without any problem
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version=v1.18.6 --vm-driver=kvm2 -p my_profile</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version=v1.18.6 --vm-driver=kvm2 -p operators</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -373,7 +373,7 @@ Although they are used in the tutorial, you could use others without any problem
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version=v1.18.6 --vm-driver=hyperv -p my_profile</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">minikube start --memory=8192 --cpus=3 --kubernetes-version=v1.18.6 --vm-driver=hyperv -p operators</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -381,9 +381,9 @@ Although they are used in the tutorial, you could use others without any problem
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">😄  [my_profile] minikube v1.20.0 on Darwin 11.3
-✅  Created a new profile : my_profile
-✅  minikube profile was successfully set to my_profile
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">😄  [operators] minikube v1.20.0 on Darwin 11.3
+✅  Created a new profile : operators
+✅  minikube profile was successfully set to operators
 😄  [default] minikube v1.12.1 on Darwin 11.3
 ✨  Selecting 'virtualbox' driver from user configuration (alternates: [hyperkit])
 🔥  Creating virtualbox VM (CPUs=2, Memory=8192MB, Disk=50000MB) ...
@@ -392,7 +392,7 @@ Although they are used in the tutorial, you could use others without any problem
 🚜  Pulling images ...
 🚀  Launching Kubernetes ...
 ⌛  Waiting for cluster to come online ...
-🏄  Done! kubectl is now configured to use "my_profile"</code></pre>
+🏄  Done! kubectl is now configured to use "operators"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -400,7 +400,7 @@ Although they are used in the tutorial, you could use others without any problem
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">eval $(minikube docker-env -p my_profile)</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">eval $(minikube docker-env -p operators)</code></pre>
 </div>
 </div>
 </div>
@@ -447,12 +447,12 @@ Kubernetes Version: v1.18.6</code></pre>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone <a href="https://github.com/redhat-scholars/operators-sdk-tutorial" class="bare">https://github.com/redhat-scholars/operators-sdk-tutorial</a> my_folder</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone <a href="https://github.com/redhat-scholars/operators-sdk-tutorial" class="bare">https://github.com/redhat-scholars/operators-sdk-tutorial</a> operators-sdk-tutorial</code></pre>
 </div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export TUTORIAL_HOME="$(pwd)/my_folder"</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export TUTORIAL_HOME="$(pwd)/operators-sdk-tutorial"</code></pre>
 </div>
 </div>
 <div class="listingblock console-input">
