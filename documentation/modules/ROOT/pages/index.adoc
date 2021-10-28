@@ -1,11 +1,13 @@
-= Welcome to Template Tutorial
+= Welcome to Operator SDK Tutorial
 :page-layout: home
 :!sectids:
 
 [.text-center.strong]
 == Publish Services to Kubernetes
 
-A Kubernetes tutorial to show how you can deploy a Java service to a Kubernetes cluster as it was a child game.
+Operator SDK is a component of the Operator Framework, an open source toolkit to manage Kubernetes native applications, called Operators, in an effective, automated, and scalable way.
+
+Learn how to build Kubernetes Operators in Helm, Ansible and Go!
 
 [.tiles.browse]
 == Browse modules
@@ -15,9 +17,13 @@ A Kubernetes tutorial to show how you can deploy a Java service to a Kubernetes 
 * xref:01-setup.adoc#minikube[Minikube]
 
 [.tile]
-.xref:02-helm.adoc[Deploying]
+.xref:02-helm.adoc[Helm]
 * xref:02-helm.adoc#init[Generate the operator]
 
 [.tile]
-.xref:03-ansible.adoc[Deploying]
+.xref:03-ansible.adoc[Ansible]
 * xref:03-ansible.adoc#init[Generate the operator]
+
+[.tile]
+.xref:04-go.adoc[Go]
+* xref:04-go.adoc#init[Generate the operator]
