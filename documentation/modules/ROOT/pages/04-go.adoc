@@ -3,7 +3,7 @@ include::_attributes.adoc[]
 
 In this section we implement an Operator in Go which will define some Custom Resource to control and deploy a 3-tier app:
 
-* *Frontend*: React app from `docker.io/jdob/visitors-webui:1.0.0
+* *Frontend*: React app from `docker.io/jdob/visitors-webui:1.0.0`
 * *Backend*: Python app from `docker.io/jdob/visitors-service:1.0.0`
 * *DB*: MySQL 5.7 from `docker.io/library/mysql:5.7`
 
