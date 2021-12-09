@@ -29,7 +29,7 @@ public class FrontendResources extends AbstractResources{
                     .withName("visitors-frontend")
                 .endMetadata()
                 .withNewSpec()
-                    .withReplicas(visitor.getSpec().getSize()) //Here we make use of the CR
+                    .withReplicas(1) 
                     .withNewSelector()
                         .withMatchLabels(Map.of("tier", "frontend","app", "visitors"))
                     .endSelector()
