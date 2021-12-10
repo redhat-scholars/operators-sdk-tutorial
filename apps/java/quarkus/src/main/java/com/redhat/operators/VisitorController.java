@@ -2,6 +2,7 @@ package com.redhat.operators;
 
 import javax.inject.Inject;
 
+import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.javaoperatorsdk.operator.api.Context;
 import io.javaoperatorsdk.operator.api.Controller;
@@ -9,6 +10,7 @@ import io.javaoperatorsdk.operator.api.DeleteControl;
 import io.javaoperatorsdk.operator.api.ResourceController;
 import io.javaoperatorsdk.operator.api.UpdateControl;
 import io.javaoperatorsdk.operator.processing.event.EventSourceManager;
+import io.javaoperatorsdk.operator.processing.event.internal.InformerEventSource;
 
 @Controller(namespaces = Controller.WATCH_CURRENT_NAMESPACE)
 public class VisitorController implements ResourceController<Visitor> {
@@ -29,7 +31,7 @@ public class VisitorController implements ResourceController<Visitor> {
     public UpdateControl<Visitor> createOrUpdateResource(Visitor resource, Context<Visitor> context) {
    
         // mysql
-        mySqlResources.createResources();
+        mySqlResources.createResources(resource);
         // Backend
         backendResources.createResources(resource);
         //frontend
@@ -41,15 +43,8 @@ public class VisitorController implements ResourceController<Visitor> {
     }
 
     @Override
-    public DeleteControl deleteResource(Visitor resource, Context<Visitor> context) {
-        mySqlResources.deleteResources();
-        backendResources.deleteResources();
-        frontendResources.deleteResources();
-        return ResourceController.super.deleteResource(resource, context);
-    }
-
-    @Override
     public void init(EventSourceManager eventSourceManager) {
+        //TODO make more fine grained and robust (waiting for the next release)
         eventSourceManager.registerEventSource("visitors-service-watcher", ServiceEventSource.create(client));
     }
 }

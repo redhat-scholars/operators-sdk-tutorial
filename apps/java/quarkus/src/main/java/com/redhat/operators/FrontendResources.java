@@ -17,6 +17,7 @@ public class FrontendResources extends AbstractResources{
 
 
     public void createResources(Visitor visitor) {
+        this.setVisitor(visitor);
         createFrontendDeployment(visitor);
         createFrontendService();
     }
@@ -27,6 +28,7 @@ public class FrontendResources extends AbstractResources{
         Deployment deployment1 = new DeploymentBuilder()
                 .withNewMetadata()
                     .withName("visitors-frontend")
+                    .withOwnerReferences(this.createOwnnerReference(this.getVisitor()))
                 .endMetadata()
                 .withNewSpec()
                     .withReplicas(1) 
@@ -67,6 +69,7 @@ public class FrontendResources extends AbstractResources{
                 .withNewMetadata()
                     .withName("visitors-frontend-service")
                     .withLabels(Map.of("tier", "frontend","app", "visitors"))
+                    .withOwnerReferences(this.createOwnnerReference(this.getVisitor()))
                 .endMetadata()
                 .withNewSpec()
                     .withType("NodePort")
@@ -82,11 +85,4 @@ public class FrontendResources extends AbstractResources{
             client.services().inNamespace(client.getNamespace()).create(service);        
         }
     }
-
-    @Override
-    public void deleteResources() {
-       deleteDeployment("visitors-frontend");
-       deleteService("visitors-frontend-service");
-    }
-    
 }

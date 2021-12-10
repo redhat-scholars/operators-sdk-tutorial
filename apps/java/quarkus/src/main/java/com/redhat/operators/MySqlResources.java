@@ -13,7 +13,8 @@ import io.fabric8.kubernetes.api.model.apps.DeploymentBuilder;
 @ApplicationScoped
 public class MySqlResources extends AbstractResources {
 
-    public void createResources() {
+    public void createResources(Visitor visitor) {
+        this.setVisitor(visitor);
         createMsqlSecret();
         createMsqlDeployment();
         createMsqlService();
@@ -38,6 +39,7 @@ public class MySqlResources extends AbstractResources {
             Deployment deployment = new DeploymentBuilder()
                     .withNewMetadata()
                         .withName("mysql")
+                        .withOwnerReferences(this.createOwnnerReference(this.getVisitor()))
                     .endMetadata()
                     .withNewSpec()
                         .withReplicas(1)
@@ -74,6 +76,7 @@ public class MySqlResources extends AbstractResources {
                 .withNewMetadata()
                     .withName("mysql-service")
                     .withLabels(Map.of("tier", "mysql","app", "visitors"))
+                    .withOwnerReferences(this.createOwnnerReference(this.getVisitor()))
                 .endMetadata()
                 .withNewSpec()
                     .withClusterIP("None")
@@ -86,13 +89,4 @@ public class MySqlResources extends AbstractResources {
             client.services().inNamespace(client.getNamespace()).create(service);        
         }
     }
-
-    @Override
-    public void deleteResources() {
-        deleteDeployment("mysql");
-        deleteService("mysql-service");
-        client.secrets().inNamespace(client.getNamespace()).withName("mysql-auth").delete(); 
-    }
-
-    
 }

@@ -21,9 +21,8 @@ public class ServiceEventSource extends AbstractEventSource implements Watcher<S
 
     @Override
     public void eventReceived(Action action, Service service) {
-       if(action.name().equals("DELETED")){
-           //recreate only if deleted from outside of the operator
-       }
+        final var uid = service.getMetadata().getOwnerReferences().get(0).getUid();
+        eventHandler.handleEvent(new ServiceEvent(uid, this));
     }
 
     @Override

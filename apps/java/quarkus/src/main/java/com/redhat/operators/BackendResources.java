@@ -16,6 +16,7 @@ public class BackendResources extends AbstractResources {
     
 
     public void createResources(Visitor visitor) {
+        this.setVisitor(visitor);
         createBackendDeployment(visitor);
         createBackendService();
     }
@@ -26,6 +27,7 @@ public class BackendResources extends AbstractResources {
             Deployment deployment1 = new DeploymentBuilder()
                     .withNewMetadata()
                         .withName("visitors-backend")
+                        .withOwnerReferences(this.createOwnnerReference(this.getVisitor()))
                     .endMetadata()
                     .withNewSpec()
                         .withReplicas(visitor.getSpec().getSize()) //Here we make use of the CR
@@ -67,6 +69,7 @@ public class BackendResources extends AbstractResources {
         if(checkServiceExists("visitors-backend-service").isEmpty()){
             Service service = new ServiceBuilder()
                 .withNewMetadata()
+                    .withOwnerReferences(this.createOwnnerReference(this.getVisitor()))
                     .withName("visitors-backend-service")
                     .withLabels(Map.of("tier", "backend","app", "visitors"))
                 .endMetadata()
@@ -84,12 +87,4 @@ public class BackendResources extends AbstractResources {
             client.services().inNamespace(client.getNamespace()).create(service);        
         }
     }
-
-    @Override
-    public void deleteResources() {
-        deleteDeployment("visitors-backend");
-        deleteService("visitors-backend-service");
-    }
-
-    
 }
