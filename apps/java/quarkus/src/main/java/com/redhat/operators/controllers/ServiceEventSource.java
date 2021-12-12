@@ -1,4 +1,4 @@
-package com.redhat.operators;
+package com.redhat.operators.controllers;
 
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.client.KubernetesClient;

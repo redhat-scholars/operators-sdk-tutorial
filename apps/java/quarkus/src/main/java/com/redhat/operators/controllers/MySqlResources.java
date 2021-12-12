@@ -1,7 +1,9 @@
-package com.redhat.operators;
+package com.redhat.operators.controllers;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
+
+import com.redhat.operators.Visitor;
 
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.SecretBuilder;

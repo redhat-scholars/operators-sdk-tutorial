@@ -1,9 +1,11 @@
-package com.redhat.operators;
+package com.redhat.operators.controllers;
 
 import java.util.Map;
 import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
+
+import com.redhat.operators.Visitor;
 
 import io.fabric8.kubernetes.api.model.IntOrString;
 import io.fabric8.kubernetes.api.model.Service;

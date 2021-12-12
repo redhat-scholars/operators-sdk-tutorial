@@ -24,7 +24,4 @@ public class VisitorStatus {
     public void setFrontendImage(String frontendImage) {
         this.frontendImage = frontendImage;
     }
-
-
-    
 }

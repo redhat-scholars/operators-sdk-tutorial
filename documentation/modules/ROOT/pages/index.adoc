@@ -27,3 +27,7 @@ Learn how to build Kubernetes Operators in Helm, Ansible and Go!
 [.tile]
 .xref:04-go.adoc[Go]
 * xref:04-go.adoc#init[Generate the operator]
+
+[.tile]
+.xref:05-java.adoc[Java]
+* xref:05-java.adoc#init[Generate the operator]

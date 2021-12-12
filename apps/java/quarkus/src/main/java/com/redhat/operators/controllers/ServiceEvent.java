@@ -1,4 +1,4 @@
-package com.redhat.operators;
+package com.redhat.operators.controllers;
 
 import io.javaoperatorsdk.operator.processing.event.DefaultEvent;
 import io.javaoperatorsdk.operator.processing.event.EventSource;

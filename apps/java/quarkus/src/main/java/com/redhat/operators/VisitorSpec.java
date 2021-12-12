@@ -4,7 +4,7 @@ public class VisitorSpec {
 
     private int size;
     private String title;
-    
+       
     public int getSize() {
         return size;
     }
@@ -17,6 +17,4 @@ public class VisitorSpec {
     public void setTitle(String title) {
         this.title = title;
     }
-    
-    
 }

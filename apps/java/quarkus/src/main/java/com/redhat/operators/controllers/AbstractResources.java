@@ -1,8 +1,10 @@
-package com.redhat.operators;
+package com.redhat.operators.controllers;
 
 import java.util.Optional;
 
 import javax.inject.Inject;
+
+import com.redhat.operators.Visitor;
 
 import io.fabric8.kubernetes.api.model.OwnerReference;
 import io.fabric8.kubernetes.api.model.OwnerReferenceBuilder;
@@ -51,5 +53,4 @@ public abstract class AbstractResources {
         this.visitor = visitor;
     }
 
-    abstract public void deleteResources();
 }
