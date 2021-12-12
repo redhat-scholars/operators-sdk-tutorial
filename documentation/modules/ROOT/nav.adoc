@@ -28,3 +28,12 @@
 ** xref:04-go.adoc#build-and-push[Build and Push the Operator]
 ** xref:04-go.adoc#deploy[Deploy to Kubernetes]
 ** xref:04-go.adoc#deploy-with-olm[Deploy to Kubernetes with OLM]
+
+* xref:05-java.adoc[5. Java Operator]
+** xref:05-java.adoc#init[Scaffold Operator]
+** xref:05-java.adoc#api[Create API]
+** xref:05-java.adoc#controllers[Controllers]
+** xref:05-java.adoc#build-run[Build & Run]
+** xref:05-java.adoc#apply-cr[Apply CR]
+** xref:05-java.adoc#build-and-push[Build and Push the Operator]
+** xref:05-java.adoc#deploy[Deploy to Kubernetes]

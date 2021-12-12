@@ -1,0 +1,310 @@
+= Java Operator
+include::_attributes.adoc[]
+
+In this section we implement an Operator in Java which will define some Custom Resource to control and deploy a 3-tier app:
+
+* *Frontend*: React app from `docker.io/jdob/visitors-webui:1.0.0`
+* *Backend*: Python app from `docker.io/jdob/visitors-service:1.0.0`
+* *DB*: MySQL 5.7 from `docker.io/library/mysql:5.7`
+
+[#init]
+== Scaffold the new operator
+
+Create a new directory on your machine, for instance : `$HOME/visitors-operator`
+
+[.console-input]
+[source, bash,subs="+macros,+attributes"]
+----
+operator-sdk init --domain operators.redhat.com --plugins quarkus
+----
+
+This will scaffold an empty `Quarkus` project for you.
+
+The plugin is is running some versions behind, so open the `pom.xml` and in the `properties` section update to this : 
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+ <quarkus-sdk.version>2.0.2</quarkus-sdk.version>
+ <quarkus.version>2.5.1.Final</quarkus.version>
+----
+
+And you can remove this portion from `dependencyManagement` : 
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+<dependency>
+    <groupId>io.fabric8</groupId>
+    <artifactId>kubernetes-client-bom</artifactId>
+    <version>${fabric8-client.version}</version>
+    <type>pom</type>
+    <scope>import</scope>
+</dependency>
+----
+
+[#api]
+== Generate an API
+
+Le's create an API for our operator : 
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+operator-sdk create api --group=app --version=v1 --kind=Visitor 
+----
+
+This will scaffold your operator's classes : controller and POJO objects.
+
+In general, it’s recommended to have one controller responsible for manage each API created for the project to properly follow the design goals set by controller-runtime.
+
+
+
+[#api-definition]
+== API definition
+
+
+To begin, we will represent our API by defining the `Visitor` type : 
+
+Open generated API:
+`$HOME/visitors-operator/src/main/java/com/redhat/operators/VisitorSpec.java`
+
+Fill these sections with the following:
+
+[.console-input]
+[source,java,subs="+macros,+attributes"]
+----
+package com.redhat.operators;
+
+public class VisitorSpec {
+
+    private int size;
+    private String title;
+       
+    public int getSize() {
+        return size;
+    }
+    public void setSize(int size) {
+        this.size = size;
+    }
+    public String getTitle() {
+        return title;
+    }
+    public void setTitle(String title) {
+        this.title = title;
+    }
+}
+----
+
+And also update the status class, open : `$HOME/visitors-operator/src/main/java/com/redhat/operators/VisitorStatus.java`
+
+[.console-input]
+[source,java,subs="+macros,+attributes"]
+----
+package com.redhat.operators;
+
+public class VisitorStatus {
+    private String backendImage;
+    
+    private String frontendImage;
+    
+    public VisitorStatus() {
+    }
+    
+    public VisitorStatus(String backendImage, String frontendImage) {
+        this.backendImage = backendImage;
+        this.frontendImage = frontendImage;
+    }
+    public String getBackendImage() {
+        return backendImage;
+    }
+    public void setBackendImage(String backendImage) {
+        this.backendImage = backendImage;
+    }
+    public String getFrontendImage() {
+        return frontendImage;
+    }
+    public void setFrontendImage(String frontendImage) {
+        this.frontendImage = frontendImage;
+    }
+}
+----
+
+
+[#generate-crd]
+== Generate CRDs
+
+With the `quarkus` extension your CRDs will be generated each time you compile your project.
+
+Execute a `mvn clean package` and check the `target/kubernetes` folder, it contains your CRD but also all the other resources needed to deploy your operator on the cluster.
+
+You can also make sure that the CRDs will applied to the cluster automacilly when running in `dev` mode, go to `src/main/resources/application.properties` and set :
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+quarkus.operator-sdk.crd.apply=true
+----
+
+[#controllers]
+== Controllers
+
+
+Copy the controllers logic :
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+cp -R $TUTORIAL_HOME/apps/java/quarkus/src/main/java/com/redhat/operators/controllers $HOME/visitors-operator/src/main/java/com/redhat/operators
+----
+ 
+
+[#build-run]
+== Run your operator locally
+
+Be sure to be connected to a Kubernetes cluster and then run 
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+mvn quarkus:dev
+----
+
+Since you are in `dev` mode, you can benefit from all the Developer Experience that Quarkus offers you : live reload, etc ... 
+
+[#apply-cr]
+== Apply a Custom Resource 
+
+You can now apply a custom resource 
+
+[.console-input]
+[source,yaml,subs="+macros,+attributes"]
+----
+apiVersion: app.redhat.com/v1
+kind: VisitorsApp
+metadata:
+  name: visitorsapp-sample
+spec:
+  size: 1
+  title: "My First Operator in Quarkus!"
+----
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+kubectl apply -f $TUTORIAL_HOME/apps/cr/visitorsapp-java.yaml
+----
+
+Check the pods getting created :
+
+[source,bash,subs="+macros,+attributes"]
+----
+kubectl get pods
+
+NAME                                 READY   STATUS    RESTARTS   AGE
+
+mysql-86c559bb7f-kjjvt               1/1     Running   0          28h
+
+visitors-backend-7489bb97dd-wggkt    1/1     Running   0          28h
+
+visitors-frontend-86df47fffc-d2bgl   1/1     Running   0          28h
+----
+
+
+Check your newly create CR: 
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+kubectl get visitor
+----
+
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
+NAME                 AGE
+visitorsapp-sample   1m
+----
+
+Get your VisitorApp status: 
+
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+kubectl describe visitor visitorsapp-sample
+----
+
+[.console-output]
+[source,bash,subs="+macros,+attributes"]
+----
+Name:         visitorsapp-sample
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+API Version:  app.redhat.com/v1
+Kind:         Visitor
+Metadata:
+  Creation Timestamp:  2021-10-28T07:39:34Z
+Spec:
+  Size:   1
+  Title:  My First Operator in Go!
+Status:
+  Backend Image:   jdob/visitors-service:1.0.0
+  Frontend Image:  jdob/visitors-webui:1.0.0
+Events:            <none>
+----
+
+Access the VisitorsApp! A kubernetes service for the frontend has been created (`visitorsapp-sample-frontend-service`) and it is exposed as a `NodePort` on port `30686`.
+
+On Minikube, get Minikube IP and access the app:
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+IP=$(minikube ip -p operators)
+PORT=$(kubectl get service/visitorsapp-sample-frontend-service -o jsonpath="{.spec.ports[*].nodePort}")
+curl $IP:$PORT
+----
+
+Or open it in the browser:
+
+image::visitorsapp.png[Visitors App]
+
+[#build-and-push]
+== Build and Push the Operator
+
+In your application properties make sure to set the correct container group (using your own group/username), i.e 
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+quarkus.container-image.group=quay.io/rhdevelopers
+----
+
+Be sure to be logged to your registry, then build, push your operator and apply the `kubernetes` resources : 
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+mvn clean package -Dquarkus.container-image.push=true -Dquarkus.kubernetes.deploy=true
+----
+
+
+
+[#deploy-with-olm]
+== Deploy to Kubernetes with OLM
+
+
+The link:https://github.com/operator-framework/operator-lifecycle-manager/[Operator Lifecycle Manager (OLM)] is a set of cluster resources that manage the lifecycle of an Operator. The Operator SDK supports both creating manifests for OLM deployment, and testing your Operator on an OLM-enabled Kubernetes cluster.
+
+Install OLM with the Operator SDK CLI:
+
+[.console-input]
+[source,bash,subs="+macros,+attributes"]
+----
+operator-sdk olm install
+----
+
+TODO : Bundling a Quarkus Operator
+
