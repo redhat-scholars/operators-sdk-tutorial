@@ -35,7 +35,7 @@ public abstract class AbstractResources {
         client.services().inNamespace(client.getNamespace()).withName(name).delete();
     }
 
-    protected OwnerReference createOwnnerReference(Visitor resource) {
+    protected OwnerReference createOwnerReference(Visitor resource) {
         final var metadata = resource.getMetadata();
         return new OwnerReferenceBuilder()
                 .withUid(metadata.getUid())
