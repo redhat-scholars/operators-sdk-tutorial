@@ -3,5 +3,5 @@ kind: Visitor
 metadata:
   name: visitorsapp-sample
 spec:
-  size: 2
-  title: "My  updated First Operator in Quarkus!"
+  size: 1
+  title: " Operator in Quarkus 2.0 !"
