@@ -170,7 +170,7 @@ status:
 [#controllers]
 == Controllers
 
-link:https://kubernetes.io/docs/concepts/architecture/controller/[Controllers] are core components in Kubernetes and is where you operator logic takes place.
+link:https://kubernetes.io/docs/concepts/architecture/controller/[Controllers] are core components in Kubernetes and is where your operator logic takes place.
 
 The reconcile function is responsible for enforcing the desired CR state on the actual state of the system. It runs each time an event occurs on a watched CR or resource, and will return some value depending on whether those states match or not.
 
