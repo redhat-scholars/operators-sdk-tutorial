@@ -180,8 +180,8 @@ You can now apply a custom resource
 [.console-input]
 [source,yaml,subs="+macros,+attributes"]
 ----
-apiVersion: app.redhat.com/v1
-kind: VisitorsApp
+apiVersion: app.operators.redhat.com/v1
+kind: Visitor
 metadata:
   name: visitorsapp-sample
 spec:
@@ -192,7 +192,7 @@ spec:
 [.console-input]
 [source,bash,subs="+macros,+attributes"]
 ----
-kubectl apply -f $TUTORIAL_HOME/apps/cr/visitorsapp-java.yaml
+kubectl apply -f $TUTORIAL_HOME/apps/cr/visitor-java.yml
 ----
 
 Check the pods getting created :
